@@ -115,6 +115,37 @@ const riskColor = (score) =>
 const riskLabel = (score) =>
   score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MODERATE' : 'LOW'
 
+const AGENT_IDS = new Set(AGENTS.map(agent => agent.id))
+const LEGACY_AGENT_IDS = {
+  autopsy_agent: 'autopsy',
+  timeline_agent: 'timeline',
+  cctv_agent: 'cctv',
+  toxicology_agent: 'toxicology',
+  correlation_agent: 'correlation',
+  explainability_agent: 'explainability',
+  risk_agent: 'risk',
+  lead_generator: 'leads',
+}
+
+const normalizeAgentId = (id) => LEGACY_AGENT_IDS[id] || id
+const findingKey = (finding) => `${finding.agent || 'unknown'}|${finding.type || 'FINDING'}|${finding.content || ''}`
+
+const mergeUniqueFindings = (current, incoming = []) => {
+  const next = [...current]
+  const seen = new Set(current.map(findingKey))
+
+  for (const finding of incoming) {
+    const normalized = { ...finding, agent: normalizeAgentId(finding.agent) }
+    const key = findingKey(normalized)
+    if (!seen.has(key)) {
+      seen.add(key)
+      next.push(normalized)
+    }
+  }
+
+  return next
+}
+
 // ═══ RISK GAUGE (SVG) ════════════════════════════════════════════════════════
 
 function RiskGauge({ score = 0, size = 160 }) {
@@ -303,12 +334,13 @@ function InputStage({ input, setInput, onLaunch }) {
       setField('reportPdfName', file.name)
       try {
         const result = await api.extractPdfText(file)
+        setPdfWarning(result.warning || '')
         if (result.text) {
           setField('reportText', result.text)
-          setField('reportPdfName', `${file.name} · ${result.pages} pages · ${result.chars?.toLocaleString() ?? '?'} chars`)
+          setField('reportPdfName', `${file.name} · ${result.pages} pages · ${result.chars?.toLocaleString() ?? '?'} chars · ${result.method}`)
         } else {
-          setPdfWarning(result.warning || 'No text extracted — PDF may be image-only. Paste text manually.')
           setField('reportPdfName', file.name)
+          setPdfWarning(result.warning || 'No text extracted — PDF may be image-only. Paste text manually.')
         }
       } catch (e) {
         setPdfWarning(`Extraction failed: ${e.message}. Paste text manually.`)
@@ -945,7 +977,7 @@ export default function AIModulesView() {
   const [agentFindings, setAgentFindings] = useState({})
   const [liveFindings,  setLiveFindings]  = useState([])
   const [streamLog,     setStreamLog]     = useState([])
-  const [completedCount,setCompletedCount]= useState(0)
+  const [completedAgents,setCompletedAgents]= useState([])
   const [threadId,      setThreadId]      = useState(null)
   const [riskScore,     setRiskScore]     = useState(null)
   const [riskLevel,     setRiskLevel]     = useState('UNKNOWN')
@@ -953,44 +985,62 @@ export default function AIModulesView() {
   const [interruptData, setInterruptData] = useState(null)
   const [results,       setResults]       = useState(null)
   const abortRef = useRef(null)
+  const completedCount = completedAgents.length
 
   const addLog = (msg) => setStreamLog(p => [...p.slice(-59), msg])
 
   const reset = useCallback(() => {
     abortRef.current?.()
     setStage(0); setAgentStates({}); setAgentFindings({}); setLiveFindings([])
-    setStreamLog([]); setCompletedCount(0); setThreadId(null)
+    setStreamLog([]); setCompletedAgents([]); setThreadId(null)
     setRiskScore(null); setRiskLevel('UNKNOWN')
     setInterrupted(false); setInterruptData(null); setResults(null)
   }, [])
 
-  // Classic fallback when LangGraph is not installed
+  const markAgentDone = useCallback((rawId, findingsCount = 0) => {
+    const id = normalizeAgentId(rawId)
+    if (!AGENT_IDS.has(id)) return
+
+    setAgentStates(prev => ({ ...prev, [id]: 'done' }))
+    setCompletedAgents(prev => (prev.includes(id) ? prev : [...prev, id]))
+    setAgentFindings(prev => ({
+      ...prev,
+      [id]: Math.max(prev[id] || 0, findingsCount),
+    }))
+  }, [])
+
+  // Honest fallback when LangGraph is not installed
   const runClassicFallback = useCallback(async () => {
-    addLog('⚠️ LangGraph unavailable — classic 7-agent pipeline')
+    addLog('⚠️ LangGraph unavailable — running legacy snapshot analysis')
     try {
       const r = await api.runAgentAnalysis(input.caseId)
-      const order = ['autopsy','timeline','cctv','toxicology','correlation','risk','explainability','leads']
-      for (const id of order) {
-        await new Promise(res => setTimeout(res, 450))
-        setAgentStates(p => ({ ...p, [id]: 'done' }))
-        setAgentFindings(p => ({ ...p, [id]: Math.floor(Math.random() * 4) + 1 }))
-        setCompletedCount(c => c + 1)
-        addLog(`✓ ${id}`)
-        // Feed classic findings into live panel
-        const out = r.agent_outputs?.find(o => o.agent === id) || r.agent_outputs?.[0]
-        if (out?.findings) {
-          setLiveFindings(p => [...p, ...out.findings.slice(0, 2).map(f => ({
-            type: 'FINDING', content: f, severity: 'HIGH', confidence: out.confidence, agent: id,
-          }))])
-        }
+      const normalizedOutputs = (r.agent_outputs || []).map(output => ({
+        ...output,
+        agent: normalizeAgentId(output.agent),
+      }))
+      const live = normalizedOutputs.flatMap(output =>
+        (output.findings || []).map(finding => ({
+          type: 'FINDING',
+          content: finding,
+          severity: 'HIGH',
+          confidence: output.confidence,
+          agent: output.agent,
+        })),
+      )
+
+      for (const output of normalizedOutputs) {
+        markAgentDone(output.agent, output.findings?.length || 0)
+        addLog(`✓ ${output.agent} — ${output.findings?.length || 0} findings`)
       }
+
+      setLiveFindings(live)
       const consensus = r.consensus || {}
       const mappedResults = {
-        risk_score: consensus.risk_score || Math.floor(Math.random() * 40) + 40,
+        risk_score: consensus.risk_score || 0,
         risk_level: consensus.risk_level || 'HIGH',
-        findings: r.agent_outputs?.flatMap(o => (o.findings || []).map(f => ({
+        findings: normalizedOutputs.flatMap(o => (o.findings || []).map(f => ({
           type: 'FINDING', content: f, severity: 'HIGH', confidence: o.confidence, agent: o.agent,
-        }))) || [],
+        }))),
         correlations: [],
         explanation: [consensus.primary_suspect && `Primary suspect: ${consensus.primary_suspect}.`, ...(consensus.recommended_actions || [])].filter(Boolean).join(' '),
         investigative_leads: consensus.recommended_actions || [],
@@ -1003,21 +1053,22 @@ export default function AIModulesView() {
     } catch (e) {
       addLog(`❌ ${e.message}`)
     }
-  }, [input.caseId])
+  }, [input.caseId, markAgentDone])
 
   const handleEvent = useCallback((event) => {
     if (event.type === 'thread_id') {
       setThreadId(event.thread_id)
       addLog(`🔗 Thread ${event.thread_id.slice(0, 8)}…`)
     } else if (event.type === 'agent_update') {
-      const id = event.agent
+      const id = normalizeAgentId(event.agent)
       if (id === 'phase1_join') { addLog('⚡ Phase 1 done → sequential phase'); return }
-      setAgentStates(p => ({ ...p, [id]: 'done' }))
-      setAgentFindings(p => ({ ...p, [id]: (p[id] || 0) + (event.new_findings || 0) }))
-      setCompletedCount(c => c + 1)
+      markAgentDone(id, event.findings?.length || event.new_findings || 0)
       addLog(`✓ ${id} — ${event.new_findings || 0} findings`)
       if (event.risk_score != null) { setRiskScore(event.risk_score); setRiskLevel(event.risk_level || 'UNKNOWN') }
       if (event.errors?.length)    addLog(`⚠ ${event.errors[0]}`)
+      if (event.findings?.length) {
+        setLiveFindings(prev => mergeUniqueFindings(prev, event.findings))
+      }
       const nxt = NEXT_AGENT[id]
       if (nxt) setAgentStates(p => ({ ...p, [nxt]: p[nxt] === 'done' ? 'done' : 'running' }))
     } else if (event.type === 'interrupt') {
@@ -1025,13 +1076,18 @@ export default function AIModulesView() {
       setInterrupted(true); setInterruptData(payload)
       addLog('⏸ Human review required')
     } else if (event.type === 'complete') {
-      // Merge any extra findings from the complete event into liveFindings
-      if (event.findings?.length) setLiveFindings(event.findings)
-      setResults(event)
+      if (event.findings?.length) {
+        setLiveFindings(event.findings.map(finding => ({ ...finding, agent: normalizeAgentId(finding.agent) })))
+      }
+      setResults({
+        ...event,
+        findings: (event.findings || []).map(finding => ({ ...finding, agent: normalizeAgentId(finding.agent) })),
+      })
       setRiskScore(event.risk_score ?? riskScore)
       setRiskLevel(event.risk_level ?? riskLevel)
       const allDone = {}; AGENTS.forEach(a => { allDone[a.id] = 'done' })
       setAgentStates(allDone)
+      setCompletedAgents(AGENTS.map(agent => agent.id))
       addLog(`🏁 Done — Risk ${event.risk_score}/100 (${event.risk_level})`)
       setStage(2)
     } else if (event.type === 'error') {
@@ -1042,7 +1098,7 @@ export default function AIModulesView() {
         addLog(`❌ ${e}`)
       }
     }
-  }, [riskScore, riskLevel, runClassicFallback])
+  }, [riskScore, riskLevel, runClassicFallback, markAgentDone])
 
   const launch = useCallback(() => {
     reset()

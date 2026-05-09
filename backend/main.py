@@ -174,7 +174,7 @@ def api_status():
         "graphrag": get_knowledge_base_stats(),
         "auth": "JWT (HS256)",
         "evidence_pipeline": "active",
-        "multi_agent_system": "active (7 agents)",
+        "multi_agent_system": "active (8-stage LangGraph pipeline)",
         "websocket": "active",
         "features_from_nextjs": [
             "universal_llm_provider", "graphrag_knowledge_base",

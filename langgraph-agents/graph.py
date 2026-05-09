@@ -3,15 +3,15 @@
 ForensiX AI — LangGraph Multi-Agent System
 ═══════════════════════════════════════════════════════════════════════════
 
-8 Specialized Agents orchestrated by LangGraph StateGraph:
+8 Investigation Stages orchestrated by LangGraph StateGraph:
 1. Autopsy Agent      — Gemini 2.5 Pro (extracts injuries, COD, toxicology)
 2. Timeline Agent     — Local deterministic (gap detection, clustering)
 3. CCTV Agent         — Gemini 2.5 Flash (person/vehicle/weapon detection)
 4. Toxicology Agent   — Featherless LLM (drug interactions, significance)
 5. Correlation Agent  — Featherless LLM + embeddings (cross-evidence links)
-6. Explainability Agent — Featherless LLM (SHAP-style explanations)
-7. Risk Agent         — 100% deterministic (zero AI in scoring)
-8. Orchestrator       — Gemini Flash (routes, coordinates, generates leads)
+6. Risk Agent         — 100% deterministic (zero AI in scoring)
+7. Explainability Agent — Featherless LLM (SHAP-style explanations)
+8. Lead Generator     — Deterministic post-analysis actions
 
 Architecture: Custom StateGraph with parallel fan-out + conditional routing + HITL
 ═══════════════════════════════════════════════════════════════════════════
@@ -471,14 +471,6 @@ def human_review_node(state: ForensicState) -> dict:
 # ROUTING LOGIC
 # ═══════════════════════════════════════════════════════════════
 
-def route_after_phase1(state: ForensicState) -> str:
-    """After primary agents, route to toxicology if substances found."""
-    tox = state.get("toxicology_data", [])
-    if tox:
-        return "toxicology"
-    return "correlation"
-
-
 def route_after_risk(state: ForensicState) -> str:
     """After risk scoring, check if human review needed."""
     if state.get("risk_score", 0) >= 75:
@@ -491,17 +483,12 @@ def route_after_risk(state: ForensicState) -> str:
 # ═══════════════════════════════════════════════════════════════
 
 def phase1_fanout(state: ForensicState) -> list[Send]:
-    """Run Autopsy + Timeline + CCTV in parallel."""
-    sends = []
-    if state.get("report_text"):
-        sends.append(Send("autopsy", state))
-    if state.get("evidence"):
-        sends.append(Send("timeline", state))
-    if state.get("cctv_frames"):
-        sends.append(Send("cctv", state))
-    if not sends:
-        sends.append(Send("autopsy", state))  # Always run at least one
-    return sends
+    """Run Autopsy + Timeline + CCTV in parallel for every investigation."""
+    return [
+        Send("autopsy", state),
+        Send("timeline", state),
+        Send("cctv", state),
+    ]
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -532,13 +519,8 @@ def build_forensic_graph():
     builder.add_edge("timeline", "phase1_join")
     builder.add_edge("cctv", "phase1_join")
 
-    # Join → conditional: toxicology or correlation
-    builder.add_conditional_edges("phase1_join", route_after_phase1, {
-        "toxicology": "toxicology",
-        "correlation": "correlation",
-    })
-
-    # Toxicology → Correlation
+    # Join → Toxicology → Correlation
+    builder.add_edge("phase1_join", "toxicology")
     builder.add_edge("toxicology", "correlation")
 
     # Correlation → Risk

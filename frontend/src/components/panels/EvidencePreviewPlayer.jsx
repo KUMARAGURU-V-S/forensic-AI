@@ -5,20 +5,16 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 /**
  * Map a CCTV event to its video URL.
- * Falls back to the known suspect_video.mp4 for any CCTV event.
+ * Only returns a URL when the event points at a real media asset.
  */
 function resolveVideoUrl(event) {
-  if (!event) return `${API}/media/suspect_video.mp4`
+  if (!event) return null
 
   // If the backend stores a video_url or file_path on the event, prefer that
   if (event.video_url)  return event.video_url.startsWith('http') ? event.video_url : `${API}${event.video_url}`
   if (event.file_path)  return `${API}/media/${event.file_path.split(/[\\/]/).pop()}`
   if (event.filename)   return `${API}/media/${event.filename}`
 
-  // CCTV events → serve the real footage
-  if (event.type === 'cctv' || event.category === 'cctv') {
-    return `${API}/media/suspect_video.mp4`
-  }
   return null
 }
 
