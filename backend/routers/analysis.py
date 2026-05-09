@@ -1,88 +1,129 @@
-"""Analysis Router - AI-powered forensic analysis"""
+"""Analysis Router - REAL AI analysis using HF Inference API"""
 from fastapi import APIRouter, HTTPException
-from backend.services.demo_data import get_case_by_id
+from pydantic import BaseModel
+from typing import Optional
+from backend.services.case_store import case_store
+from backend.services.ai_service import (
+    analyze_autopsy_llm, extract_entities_ner, estimate_tod_multimethod,
+    calculate_risk_score, calculate_shap_values
+)
 
 router = APIRouter()
 
+class TODRequest(BaseModel):
+    body_temp: float
+    ambient_temp: float
+    body_weight_kg: float = 70.0
+    corrective_factor: float = 1.0
+    rigor_mortis: str = ""
+    livor_mortis: str = ""
+    vitreous_potassium: Optional[float] = None
+
+class AutopsyTextRequest(BaseModel):
+    text: str
+
 @router.get("/autopsy/{case_id}")
 def analyze_autopsy(case_id: str):
-    case = get_case_by_id(case_id)
+    """AI analysis of autopsy report using NER + LLM."""
+    case = case_store.get_case(case_id)
     if not case: raise HTTPException(status_code=404, detail="Case not found")
-    autopsy = case["autopsy_report"]
-    return {
+    
+    autopsy = case.get("autopsy_report")
+    if not autopsy:
+        raise HTTPException(status_code=400, detail="No autopsy report submitted for this case")
+    
+    # Get raw text
+    raw_text = autopsy.get("raw_text", "")
+    if not raw_text:
+        # Build text from structured data
+        raw_text = f"Cause of death: {autopsy.get('cod', 'Unknown')}. Manner: {autopsy.get('manner', 'Unknown')}."
+        if autopsy.get("injuries"):
+            raw_text += " Injuries: " + "; ".join(f"{i['type']} on {i['location']}" for i in autopsy["injuries"])
+        if autopsy.get("toxicology", {}).get("findings"):
+            raw_text += " Toxicology: " + "; ".join(f"{t['substance']}: {t['level']}" for t in autopsy["toxicology"]["findings"])
+    
+    # Step 1: NER extraction
+    entities = extract_entities_ner(raw_text)
+    
+    # Step 2: LLM structured analysis
+    llm_analysis = analyze_autopsy_llm(raw_text)
+    
+    # Store the AI analysis
+    result = {
         "case_id": case_id,
-        "nlp_extraction": {
-            "cause_of_death": autopsy["cod"], "manner_of_death": autopsy["manner"],
-            "injuries_detected": len(autopsy["injuries"]), "injury_details": autopsy["injuries"],
-            "toxicology_substances": len(autopsy["toxicology"]["findings"]),
-            "toxicology_conclusion": autopsy["toxicology"]["conclusion"], "confidence": 0.94
-        },
-        "ai_insights": [
-            "Organophosphate concentration 8.4x lethal threshold indicates intentional administration",
-            "Restraint marks on wrist suggest victim was incapacitated before poisoning",
-            "Petechial hemorrhages consistent with respiratory distress from cholinergic crisis",
-            "Sub-therapeutic ethanol suggests victim was not intoxicated at time of death",
-            "Prescribed diazepam at therapeutic levels may have slowed initial response to poisoning"
-        ],
-        "similar_cases": [
-            {"case_id": "FTI-2023-0234", "similarity": 0.78, "method": "organophosphate_poisoning", "outcome": "convicted"},
-            {"case_id": "FTI-2022-0891", "similarity": 0.65, "method": "chemical_poisoning", "outcome": "ongoing"}
-        ]
+        "ner_entities": entities,
+        "structured_analysis": llm_analysis,
+        "raw_text_length": len(raw_text),
+        "processing": {
+            "ner_model": "d4data/biomedical-ner-all",
+            "llm_model": llm_analysis.get("ai_model", "unknown"),
+            "confidence": llm_analysis.get("confidence", 0)
+        }
+    }
+    
+    case_store.update_case(case_id, {"ai_analysis": result})
+    return result
+
+@router.post("/autopsy-text")
+def analyze_autopsy_text(req: AutopsyTextRequest):
+    """Analyze raw autopsy text without associating to a case (standalone)."""
+    entities = extract_entities_ner(req.text)
+    llm_analysis = analyze_autopsy_llm(req.text)
+    return {
+        "ner_entities": entities,
+        "structured_analysis": llm_analysis,
+        "raw_text_length": len(req.text),
     }
 
+@router.post("/tod")
+def estimate_time_of_death(req: TODRequest):
+    """Real Henssge nomogram + multi-method TOD estimation."""
+    result = estimate_tod_multimethod(
+        body_temp=req.body_temp,
+        ambient_temp=req.ambient_temp,
+        body_weight_kg=req.body_weight_kg,
+        rigor_mortis=req.rigor_mortis,
+        livor_mortis=req.livor_mortis,
+        vitreous_potassium=req.vitreous_potassium
+    )
+    return result
+
 @router.get("/tod/{case_id}")
-def estimate_time_of_death(case_id: str):
-    case = get_case_by_id(case_id)
+def estimate_tod_from_case(case_id: str):
+    """Estimate TOD from case autopsy data."""
+    case = case_store.get_case(case_id)
     if not case: raise HTTPException(status_code=404, detail="Case not found")
-    tod = case["autopsy_report"]["time_of_death"]
-    body_temp = tod["body_temp_at_scene"]
-    temp_diff = 37.0 - body_temp
-    estimated_hours = temp_diff / 1.5
-    vk_hours = estimated_hours * 0.95
-    combined = (estimated_hours + vk_hours) / 2
-    return {
-        "case_id": case_id, "estimation_mode": "early_phase" if combined < 72 else "late_phase",
-        "methods_used": [
-            {"method": "Henssge Nomogram", "estimated_pmi_hours": round(estimated_hours, 1), "confidence": 0.85,
-             "parameters": {"body_temperature": body_temp, "ambient_temperature": tod["ambient_temp"], "body_weight_kg": 78, "clothing_factor": 1.2}},
-            {"method": "Vitreous Potassium", "estimated_pmi_hours": round(vk_hours, 1), "confidence": 0.82,
-             "parameters": {"potassium_level": "8.2 mEq/L", "reference_curve": "Madea_2005"}},
-            {"method": "Rigor Mortis Assessment", "estimated_pmi_hours": round(combined * 1.05, 1), "confidence": 0.75,
-             "parameters": {"stage": tod["rigor_mortis"], "ambient_temp_factor": "normal"}},
-            {"method": "Livor Mortis Assessment", "estimated_pmi_hours": round(combined * 1.1, 1), "confidence": 0.70,
-             "parameters": {"stage": tod["livor_mortis"], "position_consistent": True}}
-        ],
-        "combined_estimation": {"pmi_hours": round(combined, 1), "estimated_tod": tod["estimated"],
-                               "confidence_interval": f"±{tod['range_hours']} hours", "overall_confidence": 0.88},
-        "smartwatch_corroboration": {"last_heartbeat": "2024-11-14T22:29:00Z", "consistent_with_estimate": True,
-                                    "refinement": "Smartwatch data narrows TOD to ±5 minutes"}
-    }
+    
+    autopsy = case.get("autopsy_report", {})
+    tod_data = autopsy.get("time_of_death", {})
+    
+    if not tod_data or not tod_data.get("body_temp_at_scene"):
+        raise HTTPException(status_code=400, detail="No time-of-death data in autopsy report")
+    
+    result = estimate_tod_multimethod(
+        body_temp=tod_data["body_temp_at_scene"],
+        ambient_temp=tod_data.get("ambient_temp", 20.0),
+        body_weight_kg=tod_data.get("body_weight_kg", 70),
+        rigor_mortis=tod_data.get("rigor_mortis", ""),
+        livor_mortis=tod_data.get("livor_mortis", ""),
+        vitreous_potassium=tod_data.get("vitreous_potassium")
+    )
+    result["case_id"] = case_id
+    return result
 
 @router.get("/explainability/{case_id}")
 def get_explainability(case_id: str):
-    case = get_case_by_id(case_id)
+    """Real SHAP + LIME explainability for the case risk score."""
+    case = case_store.get_case(case_id)
     if not case: raise HTTPException(status_code=404, detail="Case not found")
-    findings = case["ai_findings"]
-    return {
-        "case_id": case_id, "method": "SHAP + LIME Combined",
-        "overall_risk_explanation": {
-            "risk_score": findings["correlation_score"],
-            "top_contributing_factors": [
-                {"factor": "Suspect confirmed at scene (CCTV + GPS)", "contribution": 0.34, "direction": "positive"},
-                {"factor": "Lethal poison concentration", "contribution": 0.22, "direction": "positive"},
-                {"factor": "Financial motive ($2.4M transfer)", "contribution": 0.18, "direction": "positive"},
-                {"factor": "Encrypted communications pre-incident", "contribution": 0.14, "direction": "positive"},
-                {"factor": "Post-mortem file deletion", "contribution": 0.12, "direction": "positive"}
-            ],
-            "legal_transparency": "All factors are independently verifiable through physical evidence chains"
-        },
-        "per_correlation_shap": findings["key_correlations"],
-        "lime_local_explanations": [{"prediction": "Suspect S1 involvement: 97%",
-            "if_removed": [
-                {"evidence": "CCTV footage", "new_score": "71%", "impact": "-26%"},
-                {"evidence": "GPS data", "new_score": "82%", "impact": "-15%"},
-                {"evidence": "Access card logs", "new_score": "88%", "impact": "-9%"},
-                {"evidence": "Phone metadata", "new_score": "91%", "impact": "-6%"}
-            ]}
-        ]
-    }
+    
+    # Calculate or use cached risk
+    risk = case.get("risk_assessment")
+    if not risk:
+        risk = calculate_risk_score(case)
+        case_store.update_case(case_id, {"risk_assessment": risk})
+    
+    # Calculate SHAP values
+    shap_result = calculate_shap_values(case, risk)
+    shap_result["case_id"] = case_id
+    return shap_result
