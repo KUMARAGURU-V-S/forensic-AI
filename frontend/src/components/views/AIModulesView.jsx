@@ -9,11 +9,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  FileText, ImagePlus, FlaskConical, MapPin, StickyNote, Play,
+  FileText, ImagePlus, FlaskConical, MapPin,
   CheckCircle, XCircle, Loader2, AlertTriangle, RefreshCw,
   ChevronRight, Link2, Target, Lightbulb, Shield, Zap, Upload,
-  Plus, Trash2, Eye, BarChart3, ArrowRight, Brain, Activity,
-  Clock, X, Users,
+  Plus, Trash2, Eye, ArrowRight, Brain, Activity,
+  Clock, X, Users, Wifi, WifiOff, Database, Server, ScanSearch,
 } from 'lucide-react'
 import { api } from '../../lib/api'
 import { useForensicStore } from '../../lib/store'
@@ -129,6 +129,7 @@ const LEGACY_AGENT_IDS = {
 
 const normalizeAgentId = (id) => LEGACY_AGENT_IDS[id] || id
 const findingKey = (finding) => `${finding.agent || 'unknown'}|${finding.type || 'FINDING'}|${finding.content || ''}`
+const correlationKey = (correlation) => `${correlation.source || ''}|${correlation.target || ''}|${correlation.type || ''}|${correlation.description || ''}`
 
 const mergeUniqueFindings = (current, incoming = []) => {
   const next = [...current]
@@ -144,6 +145,118 @@ const mergeUniqueFindings = (current, incoming = []) => {
   }
 
   return next
+}
+
+const mergeUniqueCorrelations = (current, incoming = []) => {
+  const next = [...current]
+  const seen = new Set(current.map(correlationKey))
+
+  for (const correlation of incoming) {
+    const key = correlationKey(correlation)
+    if (!seen.has(key)) {
+      seen.add(key)
+      next.push(correlation)
+    }
+  }
+
+  return next
+}
+
+const mergeUniqueStrings = (current, incoming = []) => {
+  const seen = new Set(current)
+  const next = [...current]
+
+  for (const item of incoming) {
+    if (!seen.has(item)) {
+      seen.add(item)
+      next.push(item)
+    }
+  }
+
+  return next
+}
+
+const formatElapsed = (startedAt, now = Date.now()) => {
+  if (!startedAt) return '00:00'
+  const total = Math.max(0, Math.floor((now - startedAt) / 1000))
+  const minutes = String(Math.floor(total / 60)).padStart(2, '0')
+  const seconds = String(total % 60).padStart(2, '0')
+  return `${minutes}:${seconds}`
+}
+
+const summarizeInput = (input) => ({
+  reportChars: input.reportText?.trim().length || 0,
+  reportLoaded: Boolean(input.reportText?.trim()),
+  frames: input.cctvFrames?.length || 0,
+  toxicology: input.toxicology?.filter(t => t.substance?.trim()).length || 0,
+  evidence: input.evidence?.filter(e => e.details?.trim()).length || 0,
+})
+
+const countFindingsByAgent = (findings = []) => findings.reduce((acc, finding) => {
+  const id = normalizeAgentId(finding.agent)
+  acc[id] = (acc[id] || 0) + 1
+  return acc
+}, {})
+
+function StatusChip({ tone = 'neutral', label, detail, icon: Icon = Activity }) {
+  const palette = {
+    good:   { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.28)', text: C.green },
+    warn:   { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.28)', text: C.amber },
+    bad:    { bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.28)', text: C.red },
+    info:   { bg: 'rgba(0,212,255,0.1)', border: 'rgba(0,212,255,0.22)', text: C.cyan },
+    neutral:{ bg: 'rgba(148,163,184,0.08)', border: 'rgba(148,163,184,0.18)', text: '#94a3b8' },
+  }
+  const style = palette[tone] || palette.neutral
+
+  return (
+    <div className="rounded-xl px-3 py-2 flex items-center gap-2"
+      style={{ background: style.bg, border: `1px solid ${style.border}` }}>
+      <Icon size={13} style={{ color: style.text }} className="flex-shrink-0" />
+      <div className="min-w-0">
+        <div className="text-[10px] font-bold text-white truncate">{label}</div>
+        {detail && <div className="text-[9px] font-mono truncate" style={{ color: style.text }}>{detail}</div>}
+      </div>
+    </div>
+  )
+}
+
+function MetricCard({ label, value, detail, color = C.cyan, icon: Icon = Activity }) {
+  return (
+    <div className="rounded-2xl p-4"
+      style={{ background: C.card, border: `1px solid ${color}24`, boxShadow: `0 0 24px ${color}10` }}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-2xl font-black leading-none" style={{ color }}>{value}</div>
+          <div className="text-[10px] text-slate-500 mt-2">{label}</div>
+          {detail && <div className="text-[9px] font-mono mt-1 text-slate-600">{detail}</div>}
+        </div>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: `${color}12`, border: `1px solid ${color}28` }}>
+          <Icon size={16} style={{ color }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SectionFrame({ title, icon: Icon = Activity, color = C.cyan, action = null, children }) {
+  return (
+    <div className="rounded-3xl p-5"
+      style={{
+        background: 'linear-gradient(180deg, rgba(8,15,30,0.96) 0%, rgba(5,10,20,0.96) 100%)',
+        border: `1px solid ${color}18`,
+        boxShadow: `0 0 40px ${color}0d`,
+      }}>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <Icon size={14} style={{ color }} />
+          <div className="text-xs font-black text-white tracking-wide">{title}</div>
+        </div>
+        {action}
+      </div>
+      {children}
+    </div>
+  )
 }
 
 // ═══ RISK GAUGE (SVG) ════════════════════════════════════════════════════════
@@ -187,20 +300,24 @@ function AgentNode({ agent, state = 'idle', findingsN = 0, compact = false }) {
   const isDone    = state === 'done'
   const isRunning = state === 'running'
   const isError   = state === 'error'
+  const statusLabel = isDone ? 'Complete' : isRunning ? 'Live' : isError ? 'Error' : 'Queued'
 
   const borderColor = isDone ? 'rgba(16,185,129,0.5)' : isRunning ? `${agent.color}80` : isError ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.06)'
-  const bgColor     = isDone ? 'rgba(16,185,129,0.06)' : isRunning ? `${agent.color}0d` : C.card
+  const bgColor     = isDone ? 'rgba(16,185,129,0.06)' : isRunning ? `${agent.color}14` : C.card
 
   return (
     <motion.div
       animate={{ borderColor, background: bgColor, boxShadow: isRunning ? `0 0 22px ${agent.color}30` : isDone ? '0 0 14px rgba(16,185,129,0.15)' : 'none' }}
       transition={{ duration: 0.5 }}
-      className="rounded-xl flex flex-col gap-2"
+      className="rounded-2xl flex flex-col gap-3"
       style={{ padding: compact ? '10px 12px' : '14px', border: `1px solid ${borderColor}` }}>
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-base leading-none">{agent.icon}</span>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: `${agent.color}14`, border: `1px solid ${agent.color}28` }}>
+            <span className="text-base leading-none">{agent.icon}</span>
+          </div>
           <div>
             <div className={`font-bold text-white ${compact ? 'text-[11px]' : 'text-xs'}`}>{agent.name}</div>
             <div className="text-[9px] font-mono text-slate-500">{agent.model}</div>
@@ -214,12 +331,21 @@ function AgentNode({ agent, state = 'idle', findingsN = 0, compact = false }) {
         </div>
       </div>
 
-      {isDone && findingsN > 0 && (
-        <div className="text-[9px] font-mono" style={{ color: C.green }}>{findingsN} finding{findingsN !== 1 ? 's' : ''}</div>
-      )}
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[9px] font-mono px-2 py-1 rounded-full"
+          style={{
+            background: isDone ? 'rgba(16,185,129,0.12)' : isRunning ? `${agent.color}18` : 'rgba(148,163,184,0.08)',
+            color: isDone ? C.green : isRunning ? agent.color : '#64748b',
+          }}>
+          {statusLabel}
+        </div>
+        <div className="text-[9px] font-mono" style={{ color: isDone ? C.green : '#64748b' }}>
+          {findingsN} finding{findingsN !== 1 ? 's' : ''}
+        </div>
+      </div>
 
       {isRunning && (
-        <div className="h-0.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+        <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
           <motion.div className="h-full rounded-full"
             style={{ background: agent.color }}
             animate={{ x: ['-100%', '200%'] }}
@@ -279,7 +405,7 @@ function HITLModal({ data, onDecide }) {
 
 // ═══ STAGE 0: INPUT HUB ══════════════════════════════════════════════════════
 
-function InputStage({ input, setInput, onLaunch }) {
+function InputStage({ input, setInput, onLaunch, platform, onRefreshPlatform }) {
   const imgInputRef = useRef(null)
   const txtInputRef = useRef(null)
   const [pdfLoading,   setPdfLoading]   = useState(false)
@@ -360,6 +486,36 @@ function InputStage({ input, setInput, onLaunch }) {
   }
 
   const canLaunch = input.caseId.trim().length > 0
+  const inputSummary = summarizeInput(input)
+  const healthOk = platform.health?.status === 'healthy'
+  const aiOk = Boolean(platform.status?.ai_available)
+  const langGraphOk = Boolean(platform.langgraph?.available)
+  const apiCards = [
+    {
+      label: 'Core API',
+      detail: healthOk ? `v${platform.health?.version || '4.x'} ready` : platform.error || 'Unavailable',
+      tone: healthOk ? 'good' : platform.loading ? 'info' : 'bad',
+      icon: Server,
+    },
+    {
+      label: 'LangGraph',
+      detail: langGraphOk ? `${platform.langgraph?.agents || 8} stages online` : platform.langgraph?.error || 'Unavailable',
+      tone: langGraphOk ? 'good' : platform.loading ? 'info' : 'bad',
+      icon: ScanSearch,
+    },
+    {
+      label: 'LLM Provider',
+      detail: aiOk ? `${platform.status?.llm_provider} · ${platform.status?.llm_model}` : 'No provider configured',
+      tone: aiOk ? 'good' : 'warn',
+      icon: Brain,
+    },
+    {
+      label: 'Evidence Stack',
+      detail: `${inputSummary.frames} frames · ${inputSummary.evidence} evidence · ${inputSummary.toxicology} tox`,
+      tone: inputSummary.frames || inputSummary.evidence || inputSummary.reportLoaded ? 'info' : 'neutral',
+      icon: Database,
+    },
+  ]
 
   return (
     <div className="h-full overflow-y-auto" style={{ background: C.bg }}>
@@ -399,8 +555,38 @@ function InputStage({ input, setInput, onLaunch }) {
           <div className="text-[9px] font-mono text-slate-600">All agents will analyze this case</div>
         </div>
 
+        <SectionFrame
+          title="Launch Readiness"
+          icon={Activity}
+          color={C.cyan}
+          action={
+            <button onClick={onRefreshPlatform}
+              className="text-[10px] font-bold px-3 py-1.5 rounded-xl transition-all"
+              style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: '#94a3b8' }}>
+              Refresh Status
+            </button>
+          }>
+          <div className="grid md:grid-cols-4 gap-3">
+            {apiCards.map(card => (
+              <StatusChip key={card.label} tone={card.tone} label={card.label} detail={card.detail} icon={card.icon} />
+            ))}
+          </div>
+          {!aiOk && !platform.loading && (
+            <div className="mt-3 rounded-2xl px-4 py-3 flex items-start gap-2"
+              style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.18)' }}>
+              <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <div className="text-[11px] font-bold text-amber-300">Model provider not active</div>
+                <div className="text-[10px] text-amber-200/80 leading-relaxed">
+                  Real-time orchestration will still run, but the autopsy, toxicology, and explainability agents will degrade to fallback behavior until the backend is restarted with a valid provider loaded.
+                </div>
+              </div>
+            </div>
+          )}
+        </SectionFrame>
+
         {/* Input grid */}
-        <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-2 gap-4 my-5">
 
           {/* Autopsy Report */}
           <div className="rounded-xl p-4 col-span-2" style={{ background: C.card, border: `1px solid rgba(239,68,68,0.2)` }}>
@@ -606,7 +792,12 @@ function InputStage({ input, setInput, onLaunch }) {
           LAUNCH 8-AGENT FORENSIC INVESTIGATION
           <ArrowRight size={16} />
         </motion.button>
-        <div className="text-center text-[9px] text-slate-600 font-mono mt-2">
+        <div className="grid md:grid-cols-3 gap-3 mt-3">
+          <StatusChip tone={inputSummary.reportLoaded ? 'good' : 'warn'} label="Autopsy Intake" detail={inputSummary.reportLoaded ? `${inputSummary.reportChars.toLocaleString()} chars ready` : 'No report text loaded yet'} icon={FileText} />
+          <StatusChip tone={inputSummary.frames > 0 ? 'good' : 'neutral'} label="Video/CCTV" detail={`${inputSummary.frames} frame${inputSummary.frames !== 1 ? 's' : ''} queued for vision analysis`} icon={ImagePlus} />
+          <StatusChip tone={inputSummary.evidence > 0 ? 'info' : 'neutral'} label="Evidence Timeline" detail={`${inputSummary.evidence} evidence item${inputSummary.evidence !== 1 ? 's' : ''} will be correlated`} icon={MapPin} />
+        </div>
+        <div className="text-center text-[9px] text-slate-600 font-mono mt-3">
           Autopsy • Timeline • CCTV • Toxicology • Correlation • Risk • Explainability • Lead Generator
         </div>
       </div>
@@ -616,175 +807,207 @@ function InputStage({ input, setInput, onLaunch }) {
 
 // ═══ STAGE 1: LIVE PIPELINE ═══════════════════════════════════════════════════
 
-function PipelineStage({ agentStates, agentFindings, liveFindings, streamLog, completedCount, riskScore, riskLevel, interrupted, interruptData, onDecide, onReset, threadId }) {
+function PipelineStage({
+  agentStates, agentFindings, liveFindings, liveCorrelations, liveLeads, streamLog,
+  completedCount, riskScore, riskLevel, interrupted, interruptData, onDecide, onReset,
+  threadId, platform, streamState, input,
+}) {
   const logEndRef = useRef(null)
+  const [now, setNow] = useState(Date.now())
+
   useEffect(() => { logEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [streamLog])
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   const phase1 = AGENTS.filter(a => a.phase === 1)
   const phase2 = AGENTS.filter(a => a.phase === 2)
   const phase3 = AGENTS.filter(a => a.phase === 3)
-
   const phase1Done = phase1.every(a => agentStates[a.id] === 'done')
-
-  const sevColor = { CRITICAL: C.red, HIGH: C.orange, MODERATE: C.amber, INFO: C.teal, LOW: C.green }
+  const runningAgents = AGENTS.filter(agent => agentStates[agent.id] === 'running')
+  const inputSummary = summarizeInput(input)
+  const progress = Math.round((completedCount / AGENTS.length) * 100)
+  const connectionTone = streamState.state === 'open'
+    ? 'good'
+    : streamState.state === 'connecting'
+      ? 'info'
+      : streamState.state === 'error'
+        ? 'bad'
+        : 'neutral'
 
   return (
-    <div className="flex h-full overflow-hidden" style={{ background: C.bg }}>
-      {/* ── Left: Pipeline ── */}
-      <div className="flex-1 min-w-0 overflow-y-auto px-6 py-5">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
-            {completedCount < AGENTS.length
-              ? <Loader2 size={16} style={{ color: C.cyan }} className="animate-spin" />
-              : <CheckCircle size={16} className="text-green-400" />}
-            <div>
-              <div className="text-sm font-black text-white">
-                {completedCount < AGENTS.length ? 'Investigation Running' : 'Pipeline Complete'}
+    <div className="h-full overflow-y-auto" style={{ background: C.bg }}>
+      <div className="max-w-[1500px] mx-auto px-6 py-6 space-y-5">
+        <div className="rounded-[28px] p-6"
+          style={{
+            background: 'linear-gradient(135deg, rgba(5,16,28,0.98) 0%, rgba(8,18,34,0.95) 52%, rgba(20,14,39,0.96) 100%)',
+            border: `1px solid ${C.border}`,
+            boxShadow: '0 0 60px rgba(0,212,255,0.08)',
+          }}>
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="space-y-4 max-w-3xl">
+              <div className="flex items-center gap-3">
+                {completedCount < AGENTS.length
+                  ? <Loader2 size={18} style={{ color: C.cyan }} className="animate-spin" />
+                  : <CheckCircle size={18} className="text-green-400" />}
+                <div>
+                  <div className="text-lg font-black text-white">
+                    {completedCount < AGENTS.length ? '8-Agent Investigation Mission Control' : 'Investigation Complete'}
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-500">
+                    Case {input.caseId} • Thread {threadId?.slice(0, 8) ?? 'pending'} • {completedCount}/{AGENTS.length} stages closed
+                  </div>
+                </div>
               </div>
-              <div className="text-[10px] font-mono text-slate-500">
-                {completedCount}/{AGENTS.length} agents • Thread {threadId?.slice(0,8) ?? '—'}
+
+              <div className="grid md:grid-cols-4 gap-3">
+                <StatusChip tone={connectionTone} label="Realtime Transport" detail={streamState.state === 'open' ? 'SSE connected' : streamState.message || streamState.state || 'idle'} icon={streamState.state === 'open' ? Wifi : WifiOff} />
+                <StatusChip tone={platform.langgraph?.available ? 'good' : 'bad'} label="LangGraph" detail={platform.langgraph?.available ? `${platform.langgraph?.agents || 8} stages active` : platform.langgraph?.error || 'Unavailable'} icon={ScanSearch} />
+                <StatusChip tone={platform.status?.ai_available ? 'good' : 'warn'} label="Model Provider" detail={platform.status?.ai_available ? `${platform.status?.llm_provider}` : 'Fallback mode likely'} icon={Brain} />
+                <StatusChip tone={platform.status?.supabase_connected ? 'good' : 'warn'} label="Knowledge + DB" detail={platform.status?.supabase_connected ? 'Supabase connected' : 'Cloud DB degraded'} icon={Database} />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-[10px] font-mono mb-2 text-slate-500">
+                  <span>Pipeline progress</span>
+                  <span>{progress}% complete</span>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: 'linear-gradient(90deg, rgba(0,212,255,0.95) 0%, rgba(16,185,129,0.95) 50%, rgba(236,72,153,0.95) 100%)' }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
               </div>
             </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 xl:w-[520px] gap-3">
+              <MetricCard label="Elapsed" value={formatElapsed(streamState.startedAt, now)} detail={runningAgents.length ? `${runningAgents.length} live now` : 'Awaiting next stage'} color={C.cyan} icon={Clock} />
+              <MetricCard label="Findings" value={liveFindings.length} detail="Streaming in real time" color={C.green} icon={Eye} />
+              <MetricCard label="Correlations" value={liveCorrelations.length} detail="Cross-evidence links" color={C.purple} icon={Link2} />
+              <MetricCard label="Leads" value={liveLeads.length} detail={riskScore != null ? `${riskLevel} risk` : 'Pending risk'} color={riskScore != null ? riskColor(riskScore) : C.amber} icon={Target} />
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            {riskScore != null && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-                style={{ background: `${riskColor(riskScore)}12`, border: `1px solid ${riskColor(riskScore)}35` }}>
-                <span className="text-sm font-black" style={{ color: riskColor(riskScore) }}>{riskScore}/100</span>
-                <span className="text-[10px] font-bold" style={{ color: riskColor(riskScore) }}>{riskLevel}</span>
-              </div>
-            )}
+        </div>
+
+        <div className="grid xl:grid-cols-[1.45fr_0.85fr] gap-5">
+          <SectionFrame title="Live Agent Orchestration" icon={Activity} color={C.cyan} action={
             <button onClick={onReset} className="text-slate-600 hover:text-white transition-colors"><RefreshCw size={14} /></button>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div className="mb-5">
-          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-            <motion.div className="h-full rounded-full" style={{ background: `linear-gradient(90deg, ${C.cyan}, ${C.purple})` }}
-              animate={{ width: `${(completedCount / AGENTS.length) * 100}%` }} transition={{ duration: 0.6 }} />
-          </div>
-          <div className="text-[9px] font-mono text-slate-600 mt-1">{Math.round((completedCount / AGENTS.length) * 100)}% complete</div>
-        </div>
-
-        {/* PHASE 1 — Parallel */}
-        <div className="mb-2">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded"
-              style={{ background: 'rgba(0,212,255,0.08)', color: C.cyan, border: '1px solid rgba(0,212,255,0.15)' }}>
-              Phase 1 — Parallel Execution
+          }>
+            <div className="grid lg:grid-cols-3 gap-3 mb-4">
+              <MetricCard label="Phase 1 Parallel" value={phase1.filter(a => agentStates[a.id] === 'done').length} detail="Autopsy + Timeline + CCTV" color={C.cyan} icon={Zap} />
+              <MetricCard label="Sequential Queue" value={phase2.concat(phase3).filter(a => agentStates[a.id] === 'done').length} detail="Toxicology to Leads" color={C.purple} icon={ArrowRight} />
+              <MetricCard label="Risk Snapshot" value={riskScore != null ? `${riskScore}` : '—'} detail={riskLevel || 'Pending'} color={riskScore != null ? riskColor(riskScore) : C.amber} icon={Shield} />
             </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {phase1.map(a => <AgentNode key={a.id} agent={a} state={agentStates[a.id]} findingsN={agentFindings[a.id] || 0} />)}
-          </div>
-        </div>
 
-        {/* Connector */}
-        <div className="flex flex-col items-center my-3">
-          <div className="w-px h-5" style={{ background: phase1Done ? 'rgba(16,185,129,0.5)' : 'rgba(255,255,255,0.06)' }} />
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-mono font-bold"
-            style={{
-              background: phase1Done ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)',
-              border: phase1Done ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.08)',
-              color: phase1Done ? C.green : '#475569',
-            }}>
-            {phase1Done ? <CheckCircle size={9} /> : <Clock size={9} />}
-            {phase1Done ? 'Phase 1 Complete — Sequential phase starting' : 'Awaiting Phase 1 completion'}
-          </div>
-          <div className="w-px h-5" style={{ background: phase1Done ? 'rgba(16,185,129,0.5)' : 'rgba(255,255,255,0.06)' }} />
-        </div>
-
-        {/* PHASE 2 + 3 — Sequential */}
-        <div className="mb-2">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded"
-              style={{ background: 'rgba(139,92,246,0.08)', color: C.purple, border: '1px solid rgba(139,92,246,0.15)' }}>
-              Phase 2+3 — Sequential Analysis
-            </div>
-          </div>
-          <div className="space-y-2">
-            {[...phase2, ...phase3].map((a, i, arr) => (
-              <div key={a.id}>
-                <AgentNode agent={a} state={agentStates[a.id]} findingsN={agentFindings[a.id] || 0} />
-                {i < arr.length - 1 && (
-                  <div className="flex justify-center my-1.5">
-                    <div className="w-px h-4" style={{ background: agentStates[a.id] === 'done' ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.05)' }} />
-                  </div>
-                )}
+            <div className="rounded-3xl p-4 mb-4" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${C.border}` }}>
+              <div className="grid md:grid-cols-3 gap-3">
+                {phase1.map(agent => (
+                  <AgentNode key={agent.id} agent={agent} state={agentStates[agent.id]} findingsN={agentFindings[agent.id] || 0} />
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Stream log */}
-        <div className="mt-4 rounded-xl p-3 max-h-32 overflow-y-auto"
-          style={{ background: 'rgba(0,0,0,0.3)', border: `1px solid ${C.border}` }}>
-          <div className="text-[9px] text-slate-500 font-mono uppercase mb-2">Stream Log</div>
-          {streamLog.map((msg, i) => <div key={i} className="text-[10px] font-mono text-slate-400 leading-5">{msg}</div>)}
-          <div ref={logEndRef} />
-        </div>
-      </div>
+              <div className="flex flex-col items-center my-5">
+                <div className="w-px h-6" style={{ background: phase1Done ? 'rgba(16,185,129,0.45)' : 'rgba(255,255,255,0.08)' }} />
+                <div className="px-4 py-2 rounded-full text-[10px] font-mono font-bold"
+                  style={{
+                    background: phase1Done ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.04)',
+                    border: phase1Done ? '1px solid rgba(16,185,129,0.25)' : '1px solid rgba(255,255,255,0.08)',
+                    color: phase1Done ? C.green : '#64748b',
+                  }}>
+                  {phase1Done ? 'Parallel evidence intake complete' : 'Waiting for parallel evidence intake'}
+                </div>
+                <div className="w-px h-6" style={{ background: phase1Done ? 'rgba(16,185,129,0.45)' : 'rgba(255,255,255,0.08)' }} />
+              </div>
 
-      {/* ── Right: Live Findings ── */}
-      <div className="w-80 flex-shrink-0 overflow-y-auto border-l" style={{ borderColor: C.border }}>
-        <div className="sticky top-0 flex items-center justify-between px-4 py-3 z-10"
-          style={{ background: 'rgba(4,8,18,0.95)', borderBottom: `1px solid ${C.border}` }}>
-          <div className="flex items-center gap-2">
-            <Activity size={13} style={{ color: C.cyan }} />
-            <span className="text-[11px] font-bold text-white">Live Findings</span>
-          </div>
-          {liveFindings.length > 0 && (
-            <div className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold"
-              style={{ background: 'rgba(0,212,255,0.1)', color: C.cyan, border: '1px solid rgba(0,212,255,0.2)' }}>
-              {liveFindings.length}
+              <div className="grid lg:grid-cols-5 gap-3">
+                {[...phase2, ...phase3].map(agent => (
+                  <AgentNode key={agent.id} agent={agent} state={agentStates[agent.id]} findingsN={agentFindings[agent.id] || 0} compact />
+                ))}
+              </div>
             </div>
-          )}
+
+            <div className="grid lg:grid-cols-2 gap-3">
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${C.border}` }}>
+                <div className="text-[10px] font-mono uppercase text-slate-500 mb-3">Evidence Routed Into Pipeline</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <StatusChip tone={inputSummary.reportLoaded ? 'good' : 'warn'} label="Autopsy Report" detail={inputSummary.reportLoaded ? `${inputSummary.reportChars.toLocaleString()} chars` : 'No report loaded'} icon={FileText} />
+                  <StatusChip tone={inputSummary.frames ? 'good' : 'neutral'} label="CCTV Frames" detail={`${inputSummary.frames} frame${inputSummary.frames !== 1 ? 's' : ''}`} icon={ImagePlus} />
+                  <StatusChip tone={inputSummary.toxicology ? 'info' : 'neutral'} label="Toxicology Inputs" detail={`${inputSummary.toxicology} substance${inputSummary.toxicology !== 1 ? 's' : ''}`} icon={FlaskConical} />
+                  <StatusChip tone={inputSummary.evidence ? 'info' : 'neutral'} label="Evidence Items" detail={`${inputSummary.evidence} timeline entries`} icon={MapPin} />
+                </div>
+              </div>
+              <div className="rounded-2xl p-4 max-h-48 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.28)', border: `1px solid ${C.border}` }}>
+                <div className="text-[10px] font-mono uppercase text-slate-500 mb-3">Runtime Log</div>
+                {streamLog.map((msg, i) => <div key={i} className="text-[10px] font-mono text-slate-400 leading-5">{msg}</div>)}
+                <div ref={logEndRef} />
+              </div>
+            </div>
+          </SectionFrame>
+
+          <div className="space-y-5">
+            <SectionFrame title="Live Findings Feed" icon={Eye} color={C.green}>
+              <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                {liveFindings.length === 0 && (
+                  <div className="text-center py-12 text-[10px] text-slate-600 font-mono">Waiting for streamed findings from the first responding agent…</div>
+                )}
+                <AnimatePresence>
+                  {liveFindings.slice().reverse().map((finding, index) => {
+                    const severity = SEV[finding.severity] || SEV.INFO
+                    return (
+                      <motion.div
+                        key={`${findingKey(finding)}-${index}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-2xl p-3"
+                        style={{ background: severity.bg, border: `1px solid ${severity.border}` }}>
+                        <div className="flex items-center justify-between gap-3 mb-2">
+                          <span className="text-[8px] font-mono font-bold px-2 py-1 rounded-full"
+                            style={{ background: 'rgba(0,0,0,0.25)', color: severity.text }}>
+                            {finding.type || 'FINDING'}
+                          </span>
+                          <div className="text-[8px] font-mono text-slate-500">
+                            {normalizeAgentId(finding.agent)} {finding.confidence ? `· ${(finding.confidence * 100).toFixed(0)}%` : ''}
+                          </div>
+                        </div>
+                        <div className="text-[11px] text-slate-100 leading-relaxed">{finding.content}</div>
+                      </motion.div>
+                    )
+                  })}
+                </AnimatePresence>
+              </div>
+            </SectionFrame>
+
+            <SectionFrame title="Dynamic Summary" icon={Brain} color={C.purple}>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <StatusChip tone={runningAgents.length ? 'info' : 'neutral'} label="Active Agents" detail={runningAgents.length ? runningAgents.map(agent => agent.name).join(' • ') : 'No stage executing right now'} icon={Activity} />
+                <StatusChip tone={threadId ? 'good' : 'neutral'} label="Thread State" detail={threadId || 'Awaiting thread'} icon={Database} />
+              </div>
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${C.border}` }}>
+                <div className="text-[11px] text-slate-300 leading-7">
+                  {liveFindings.length > 0
+                    ? `The pipeline has produced ${liveFindings.length} live finding${liveFindings.length !== 1 ? 's' : ''}, ${liveCorrelations.length} correlation${liveCorrelations.length !== 1 ? 's' : ''}, and ${liveLeads.length} investigative lead${liveLeads.length !== 1 ? 's' : ''}. Risk scoring ${riskScore != null ? `is currently ${riskScore}/100 (${riskLevel}).` : 'has not emitted yet.'}`
+                    : 'No agent has emitted a finding yet. The page will update the moment an agent publishes its first result.'}
+                </div>
+              </div>
+            </SectionFrame>
+          </div>
         </div>
 
-        <div className="px-3 py-3 space-y-2">
-          {liveFindings.length === 0 && (
-            <div className="text-center py-10 text-[10px] text-slate-600 font-mono">Waiting for first agent…</div>
-          )}
-          <AnimatePresence>
-            {liveFindings.slice().reverse().map((f, i) => {
-              const s = SEV[f.severity] || SEV.INFO
-              return (
-                <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-                  className="p-2.5 rounded-xl"
-                  style={{ background: s.bg, border: `1px solid ${s.border}` }}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded"
-                      style={{ background: `${sevColor[f.severity] || C.cyan}20`, color: s.text }}>
-                      {f.type || 'FINDING'}
-                    </span>
-                    <span className="text-[8px] text-slate-600 font-mono">{f.agent}</span>
-                  </div>
-                  <div className="text-[10px] text-slate-300 leading-relaxed">{f.content}</div>
-                  {f.confidence && (
-                    <div className="text-[8px] font-mono mt-1" style={{ color: s.text, opacity: 0.7 }}>
-                      {((f.confidence) * 100).toFixed(0)}% confidence
-                    </div>
-                  )}
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
-        </div>
+        <AnimatePresence>
+          {interrupted && interruptData && <HITLModal data={interruptData} onDecide={onDecide} />}
+        </AnimatePresence>
       </div>
-
-      {/* HITL */}
-      <AnimatePresence>
-        {interrupted && interruptData && <HITLModal data={interruptData} onDecide={onDecide} />}
-      </AnimatePresence>
     </div>
   )
 }
 
 // ═══ STAGE 2: RESULTS ════════════════════════════════════════════════════════
 
-function ResultsStage({ results, input, onReset }) {
+function ResultsStage({ results, input, onReset, platform }) {
   const score   = results?.risk_score ?? 0
   const level   = results?.risk_level ?? riskLabel(score)
   const factors = results?.risk_factors || {}
@@ -792,165 +1015,201 @@ function ResultsStage({ results, input, onReset }) {
   const correlations= useMemo(() => results?.correlations || [], [results])
   const leads       = results?.investigative_leads || []
   const explanation = results?.explanation || ''
+  const completedAgents = results?.completed_agents || AGENTS.map(agent => agent.id)
+  const inputSummary = summarizeInput(input)
+  const findingsByAgent = countFindingsByAgent(findings)
 
   const critical = findings.filter(f => f.severity === 'CRITICAL')
   const high     = findings.filter(f => f.severity === 'HIGH')
   const rest     = findings.filter(f => !['CRITICAL','HIGH'].includes(f.severity))
 
   const typeColor = { causal: C.red, temporal: C.cyan, behavioral: C.purple, forensic: C.green }
+  const verdict = critical[0]?.content || explanation.split('\n').find(Boolean) || 'Investigation complete. Review summarized findings below.'
 
   return (
     <div className="h-full overflow-y-auto" style={{ background: C.bg }}>
-      <div className="max-w-6xl mx-auto px-6 py-6 space-y-5">
-
-        {/* Hero row */}
-        <div className="grid grid-cols-3 gap-4">
-          {/* Risk gauge */}
-          <div className="col-span-1 rounded-2xl p-5 flex flex-col items-center justify-center"
-            style={{ background: C.card, border: `1px solid ${riskColor(score)}30`, boxShadow: `0 0 40px ${riskColor(score)}12` }}>
-            <RiskGauge score={score} size={140} />
-            <div className="text-[10px] text-slate-500 font-mono mt-2">Overall Risk Score</div>
-          </div>
-
-          {/* Stats */}
-          <div className="col-span-2 grid grid-cols-2 gap-3">
-            {[
-              { label: 'Total Findings',    val: findings.length,    color: C.cyan,   icon: Eye   },
-              { label: 'Correlations',      val: correlations.length, color: C.purple, icon: Link2 },
-              { label: 'Investigative Leads', val: leads.length,     color: C.amber,  icon: Target },
-              { label: 'Agents Completed',  val: AGENTS.length,      color: C.green,  icon: CheckCircle },
-            ].map(({ label, val, color, icon: Icon }) => (
-              <div key={label} className="rounded-xl p-4 flex items-center gap-3"
-                style={{ background: C.card, border: `1px solid ${color}20` }}>
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
-                  <Icon size={16} style={{ color }} />
+      <div className="max-w-[1500px] mx-auto px-6 py-6 space-y-5">
+        <div className="rounded-[30px] p-6"
+          style={{
+            background: 'linear-gradient(135deg, rgba(6,15,27,0.98) 0%, rgba(9,18,35,0.95) 55%, rgba(19,14,35,0.96) 100%)',
+            border: `1px solid ${riskColor(score)}24`,
+            boxShadow: `0 0 60px ${riskColor(score)}14`,
+          }}>
+          <div className="grid xl:grid-cols-[1.1fr_0.9fr] gap-5 items-center">
+            <div className="flex flex-col md:flex-row gap-5 items-start">
+              <div className="rounded-3xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${riskColor(score)}24` }}>
+                <RiskGauge score={score} size={170} />
+              </div>
+              <div className="space-y-3 max-w-2xl">
+                <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em]" style={{ color: riskColor(score) }}>
+                  <Shield size={12} /> Case Verdict
                 </div>
-                <div>
-                  <div className="text-2xl font-black" style={{ color }}>{val}</div>
-                  <div className="text-[10px] text-slate-500">{label}</div>
+                <div className="text-3xl font-black text-white leading-tight">
+                  {level} risk profile for case {input.caseId}
+                </div>
+                <div className="text-[12px] text-slate-300 leading-7">{verdict}</div>
+                <div className="grid md:grid-cols-3 gap-3 pt-1">
+                  <StatusChip tone="good" label="Agents Closed" detail={`${completedAgents.length || AGENTS.length}/8 completed`} icon={CheckCircle} />
+                  <StatusChip tone={platform.status?.ai_available ? 'good' : 'warn'} label="LLM Provider" detail={platform.status?.ai_available ? `${platform.status?.llm_provider}` : 'Fallback output detected'} icon={Brain} />
+                  <StatusChip tone={platform.langgraph?.available ? 'good' : 'bad'} label="LangGraph" detail={platform.langgraph?.available ? 'Realtime orchestration active' : 'Unavailable'} icon={ScanSearch} />
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <MetricCard label="Total Findings" value={findings.length} detail={`${critical.length} critical · ${high.length} high`} color={C.cyan} icon={Eye} />
+              <MetricCard label="Correlations" value={correlations.length} detail="Evidence relationships" color={C.purple} icon={Link2} />
+              <MetricCard label="Investigative Leads" value={leads.length} detail="Actionable next steps" color={C.amber} icon={Target} />
+              <MetricCard label="Evidence Coverage" value={inputSummary.evidence + inputSummary.frames + inputSummary.toxicology} detail={`${inputSummary.reportLoaded ? 'report' : 'no report'} · ${inputSummary.frames} frames`} color={C.green} icon={Database} />
+            </div>
           </div>
         </div>
 
-        {/* Risk factors */}
-        {Object.keys(factors).length > 0 && (
-          <div className="rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-            <div className="text-xs font-black text-white mb-4 flex items-center gap-2">
-              <Shield size={14} style={{ color: C.cyan }} />RISK FACTOR BREAKDOWN
+        <div className="grid xl:grid-cols-[1.15fr_0.85fr] gap-5">
+          <SectionFrame title="Priority Findings" icon={Eye} color={C.cyan}>
+            <div className="flex gap-2 text-[9px] font-mono mb-4 flex-wrap">
+              {critical.length > 0 && <span className="px-2 py-1 rounded-full" style={{ background: 'rgba(239,68,68,0.12)', color: C.red }}>{critical.length} critical</span>}
+              {high.length > 0 && <span className="px-2 py-1 rounded-full" style={{ background: 'rgba(249,115,22,0.12)', color: C.orange }}>{high.length} high</span>}
+              {rest.length > 0 && <span className="px-2 py-1 rounded-full" style={{ background: 'rgba(148,163,184,0.1)', color: '#94a3b8' }}>{rest.length} supporting</span>}
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {Object.entries(factors).map(([k, v]) => (
-                <div key={k}>
-                  <div className="flex justify-between text-[11px] mb-1.5">
-                    <span className="text-slate-400 capitalize">{k}</span>
-                    <span className="font-bold font-mono" style={{ color: riskColor(v) }}>{v}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                    <motion.div className="h-full rounded-full"
-                      initial={{ width: 0 }} animate={{ width: `${v}%` }}
-                      transition={{ duration: 0.8, ease: [0.4,0,0.2,1] }}
-                      style={{ background: riskColor(v), boxShadow: `0 0 8px ${riskColor(v)}60` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Findings */}
-        {findings.length > 0 && (
-          <div className="rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-            <div className="text-xs font-black text-white mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2"><Eye size={14} style={{ color: C.cyan }} />FINDINGS ({findings.length})</div>
-              <div className="flex gap-2 text-[9px] font-mono">
-                {critical.length > 0 && <span className="px-2 py-0.5 rounded" style={{ background: 'rgba(239,68,68,0.12)', color: C.red }}>{critical.length} CRITICAL</span>}
-                {high.length > 0 && <span className="px-2 py-0.5 rounded" style={{ background: 'rgba(249,115,22,0.1)', color: C.orange }}>{high.length} HIGH</span>}
-              </div>
-            </div>
-            <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-              {[...critical, ...high, ...rest].map((f, i) => {
-                const s = SEV[f.severity] || SEV.INFO
+            <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+              {[...critical, ...high, ...rest].map((finding, index) => {
+                const severity = SEV[finding.severity] || SEV.INFO
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
-                    className="p-3 rounded-xl" style={{ background: s.bg, border: `1px solid ${s.border}` }}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded"
-                        style={{ background: 'rgba(0,0,0,0.3)', color: s.text }}>{f.type || 'FINDING'}</span>
-                      <div className="flex items-center gap-2 text-[9px] font-mono text-slate-600">
-                        <span>{f.agent}</span>
-                        {f.confidence && <span>{((f.confidence) * 100).toFixed(0)}%</span>}
+                  <motion.div
+                    key={`${findingKey(finding)}-${index}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="p-4 rounded-2xl"
+                    style={{ background: severity.bg, border: `1px solid ${severity.border}` }}>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] font-mono font-bold px-2 py-1 rounded-full" style={{ background: 'rgba(0,0,0,0.25)', color: severity.text }}>
+                          {finding.type || 'FINDING'}
+                        </span>
+                        <span className="text-[9px] font-mono text-slate-500">{normalizeAgentId(finding.agent)}</span>
                       </div>
+                      {finding.confidence && <span className="text-[9px] font-mono text-slate-500">{(finding.confidence * 100).toFixed(0)}%</span>}
                     </div>
-                    <div className="text-[11px] text-slate-200 leading-relaxed">{f.content}</div>
+                    <div className="text-[12px] text-slate-100 leading-7">{finding.content}</div>
                   </motion.div>
                 )
               })}
             </div>
-          </div>
-        )}
+          </SectionFrame>
 
-        {/* Correlations */}
-        {correlations.length > 0 && (
-          <div className="rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-            <div className="text-xs font-black text-white mb-4 flex items-center gap-2">
-              <Link2 size={14} style={{ color: C.cyan }} />EVIDENCE CORRELATIONS ({correlations.length})
-            </div>
-            <div className="grid md:grid-cols-2 gap-3">
-              {correlations.map((c, i) => (
-                <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
-                  className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${typeColor[c.type] || C.cyan}25` }}>
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className="text-xs font-bold" style={{ color: typeColor[c.type] || C.cyan }}>{c.source}</span>
-                    <ArrowRight size={10} className="text-slate-600" />
-                    <span className="text-xs font-bold text-white">{c.target}</span>
-                    <span className="ml-auto text-[8px] font-mono px-1.5 py-0.5 rounded"
-                      style={{ background: `${typeColor[c.type] || C.cyan}15`, color: typeColor[c.type] || C.cyan }}>
-                      {c.type} · {((c.strength || 0) * 100).toFixed(0)}%
-                    </span>
+          <div className="space-y-5">
+            <SectionFrame title="Agent Contribution Matrix" icon={Activity} color={C.green}>
+              <div className="grid grid-cols-2 gap-3">
+                {AGENTS.map(agent => {
+                  const done = completedAgents.includes(agent.id)
+                  const count = findingsByAgent[agent.id] || 0
+                  return (
+                    <div key={agent.id} className="rounded-2xl p-3"
+                      style={{ background: done ? `${agent.color}10` : 'rgba(255,255,255,0.02)', border: `1px solid ${done ? `${agent.color}30` : 'rgba(255,255,255,0.08)'}` }}>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{agent.icon}</span>
+                          <div>
+                            <div className="text-[11px] font-bold text-white">{agent.name}</div>
+                            <div className="text-[9px] font-mono text-slate-500">{agent.model}</div>
+                          </div>
+                        </div>
+                        {done ? <CheckCircle size={13} className="text-green-400" /> : <Clock size={13} className="text-slate-600" />}
+                      </div>
+                      <div className="text-[10px] font-mono mt-3" style={{ color: done ? agent.color : '#64748b' }}>
+                        {count} finding{count !== 1 ? 's' : ''} attributed
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </SectionFrame>
+
+            <SectionFrame title="Evidence Coverage" icon={Database} color={C.amber}>
+              <div className="grid grid-cols-2 gap-3">
+                <StatusChip tone={inputSummary.reportLoaded ? 'good' : 'warn'} label="Autopsy Report" detail={inputSummary.reportLoaded ? `${inputSummary.reportChars.toLocaleString()} chars parsed` : 'Missing'} icon={FileText} />
+                <StatusChip tone={inputSummary.frames > 0 ? 'good' : 'neutral'} label="CCTV Frames" detail={`${inputSummary.frames} visual input${inputSummary.frames !== 1 ? 's' : ''}`} icon={ImagePlus} />
+                <StatusChip tone={inputSummary.toxicology > 0 ? 'info' : 'neutral'} label="Toxicology" detail={`${inputSummary.toxicology} record${inputSummary.toxicology !== 1 ? 's' : ''}`} icon={FlaskConical} />
+                <StatusChip tone={inputSummary.evidence > 0 ? 'info' : 'neutral'} label="Timeline Evidence" detail={`${inputSummary.evidence} item${inputSummary.evidence !== 1 ? 's' : ''}`} icon={MapPin} />
+              </div>
+            </SectionFrame>
+          </div>
+        </div>
+
+        {Object.keys(factors).length > 0 && (
+          <SectionFrame title="Risk Factor Breakdown" icon={Shield} color={riskColor(score)}>
+            <div className="grid md:grid-cols-3 gap-4">
+              {Object.entries(factors).map(([key, value]) => (
+                <div key={key}>
+                  <div className="flex justify-between text-[11px] mb-1.5">
+                    <span className="text-slate-400 capitalize">{key}</span>
+                    <span className="font-bold font-mono" style={{ color: riskColor(value) }}>{value}/100</span>
                   </div>
-                  <div className="text-[10px] text-slate-400 leading-relaxed">{c.description}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Investigative leads */}
-        {leads.length > 0 && (
-          <div className="rounded-2xl p-5" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-            <div className="text-xs font-black mb-4 flex items-center gap-2" style={{ color: C.green }}>
-              <Target size={14} />INVESTIGATIVE LEADS ({leads.length})
-            </div>
-            <div className="grid md:grid-cols-2 gap-2">
-              {leads.map((lead, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl"
-                  style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(16,185,129,0.1)' }}>
-                  <ChevronRight size={12} style={{ color: C.green, flexShrink: 0, marginTop: 2 }} />
-                  <span className="text-[11px] text-slate-200 leading-relaxed">{lead}</span>
+                  <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                    <motion.div className="h-full rounded-full"
+                      initial={{ width: 0 }} animate={{ width: `${value}%` }}
+                      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                      style={{ background: riskColor(value), boxShadow: `0 0 8px ${riskColor(value)}60` }} />
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          </SectionFrame>
         )}
 
-        {/* AI Explanation */}
-        {explanation && (
-          <div className="rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-            <div className="text-xs font-black text-white mb-3 flex items-center gap-2">
-              <Lightbulb size={14} style={{ color: C.cyan }} />AI EXPLANATION
+        <div className="grid xl:grid-cols-2 gap-5">
+          <SectionFrame title={`Evidence Correlations (${correlations.length})`} icon={Link2} color={C.purple}>
+            <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+              {correlations.length === 0 && (
+                <div className="text-[11px] text-slate-500">No explicit cross-evidence correlations were emitted for this run.</div>
+              )}
+              {correlations.map((correlation, index) => (
+                <motion.div key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="p-4 rounded-2xl"
+                  style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${typeColor[correlation.type] || C.cyan}25` }}>
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <span className="text-xs font-bold" style={{ color: typeColor[correlation.type] || C.cyan }}>{correlation.source}</span>
+                    <ArrowRight size={10} className="text-slate-600" />
+                    <span className="text-xs font-bold text-white">{correlation.target}</span>
+                    <span className="ml-auto text-[8px] font-mono px-1.5 py-0.5 rounded"
+                      style={{ background: `${typeColor[correlation.type] || C.cyan}15`, color: typeColor[correlation.type] || C.cyan }}>
+                      {correlation.type} · {((correlation.strength || 0) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 leading-7">{correlation.description}</div>
+                </motion.div>
+              ))}
             </div>
-            <div className="text-xs text-slate-300 leading-7 font-mono whitespace-pre-wrap">{explanation}</div>
-          </div>
+          </SectionFrame>
+
+          <SectionFrame title={`Investigative Leads (${leads.length})`} icon={Target} color={C.green}>
+            <div className="space-y-3">
+              {leads.length === 0 && (
+                <div className="text-[11px] text-slate-500">No lead recommendations were generated for this run.</div>
+              )}
+              {leads.map((lead, index) => (
+                <div key={index} className="flex items-start gap-3 p-4 rounded-2xl"
+                  style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.16)' }}>
+                  <ChevronRight size={13} style={{ color: C.green, flexShrink: 0, marginTop: 2 }} />
+                  <span className="text-[12px] text-slate-100 leading-7">{lead}</span>
+                </div>
+              ))}
+            </div>
+          </SectionFrame>
+        </div>
+
+        {explanation && (
+          <SectionFrame title="AI Explanation" icon={Lightbulb} color={C.cyan}>
+            <div className="text-[12px] text-slate-300 leading-7 font-mono whitespace-pre-wrap">{explanation}</div>
+          </SectionFrame>
         )}
 
-        {/* Reset */}
         <div className="flex justify-center pb-6">
           <button onClick={onReset}
             className="flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold transition-all"
-            style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: '#64748b' }}>
+            style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: '#94a3b8' }}>
             <RefreshCw size={13} />New Investigation
           </button>
         </div>
@@ -976,6 +1235,8 @@ export default function AIModulesView() {
   const [agentStates,   setAgentStates]   = useState({})
   const [agentFindings, setAgentFindings] = useState({})
   const [liveFindings,  setLiveFindings]  = useState([])
+  const [liveCorrelations, setLiveCorrelations] = useState([])
+  const [liveLeads,     setLiveLeads]     = useState([])
   const [streamLog,     setStreamLog]     = useState([])
   const [completedAgents,setCompletedAgents]= useState([])
   const [threadId,      setThreadId]      = useState(null)
@@ -984,17 +1245,48 @@ export default function AIModulesView() {
   const [interrupted,   setInterrupted]   = useState(false)
   const [interruptData, setInterruptData] = useState(null)
   const [results,       setResults]       = useState(null)
+  const [platform,      setPlatform]      = useState({ loading: true, health: null, status: null, langgraph: null, agents: null, error: '' })
+  const [streamState,   setStreamState]   = useState({ state: 'idle', message: 'Idle', startedAt: null, lastEventAt: null })
   const abortRef = useRef(null)
   const completedCount = completedAgents.length
 
   const addLog = (msg) => setStreamLog(p => [...p.slice(-59), msg])
 
+  const refreshPlatformStatus = useCallback(async () => {
+    setPlatform(prev => ({ ...prev, loading: true, error: '' }))
+    const [healthRes, statusRes, langgraphRes, agentsRes] = await Promise.allSettled([
+      api.getHealth(),
+      api.getStatus(),
+      api.getLangGraphStatus(),
+      api.getAgentsStatus(),
+    ])
+
+    const next = {
+      loading: false,
+      health: healthRes.status === 'fulfilled' ? healthRes.value : null,
+      status: statusRes.status === 'fulfilled' ? statusRes.value : null,
+      langgraph: langgraphRes.status === 'fulfilled' ? langgraphRes.value : null,
+      agents: agentsRes.status === 'fulfilled' ? agentsRes.value : null,
+      error: [healthRes, statusRes, langgraphRes, agentsRes].find(result => result.status === 'rejected')?.reason?.message || '',
+    }
+
+    setPlatform(next)
+    return next
+  }, [])
+
+  useEffect(() => {
+    refreshPlatformStatus()
+    const timer = setInterval(refreshPlatformStatus, 30000)
+    return () => clearInterval(timer)
+  }, [refreshPlatformStatus])
+
   const reset = useCallback(() => {
     abortRef.current?.()
-    setStage(0); setAgentStates({}); setAgentFindings({}); setLiveFindings([])
+    setStage(0); setAgentStates({}); setAgentFindings({}); setLiveFindings([]); setLiveCorrelations([]); setLiveLeads([])
     setStreamLog([]); setCompletedAgents([]); setThreadId(null)
     setRiskScore(null); setRiskLevel('UNKNOWN')
     setInterrupted(false); setInterruptData(null); setResults(null)
+    setStreamState({ state: 'idle', message: 'Idle', startedAt: null, lastEventAt: null })
   }, [])
 
   const markAgentDone = useCallback((rawId, findingsCount = 0) => {
@@ -1045,22 +1337,44 @@ export default function AIModulesView() {
         explanation: [consensus.primary_suspect && `Primary suspect: ${consensus.primary_suspect}.`, ...(consensus.recommended_actions || [])].filter(Boolean).join(' '),
         investigative_leads: consensus.recommended_actions || [],
         risk_factors: {},
+        completed_agents: AGENTS.map(agent => agent.id),
       }
+      setLiveLeads(consensus.recommended_actions || [])
       setResults(mappedResults)
       setRiskScore(mappedResults.risk_score)
+      setRiskLevel(mappedResults.risk_level)
+      setStreamState(prev => ({ ...prev, state: 'closed', message: 'Legacy snapshot complete', lastEventAt: Date.now() }))
       addLog(`🏁 Complete — Risk: ${mappedResults.risk_score}/100`)
       setStage(2)
     } catch (e) {
       addLog(`❌ ${e.message}`)
+      setStreamState(prev => ({ ...prev, state: 'error', message: e.message, lastEventAt: Date.now() }))
     }
   }, [input.caseId, markAgentDone])
 
   const handleEvent = useCallback((event) => {
-    if (event.type === 'thread_id') {
+    if (event.type === 'connection') {
+      const message = event.error || (
+        event.state === 'open' ? 'SSE connected' :
+        event.state === 'closed' ? 'Stream closed' :
+        event.state === 'connecting' ? 'Connecting to investigation stream…' :
+        'Stream error'
+      )
+      setStreamState(prev => ({
+        ...prev,
+        state: event.state || prev.state,
+        message,
+        lastEventAt: Date.now(),
+      }))
+      if (event.state === 'open') addLog('🛰 Realtime stream connected')
+      if (event.state === 'error') addLog(`❌ ${message}`)
+    } else if (event.type === 'thread_id') {
       setThreadId(event.thread_id)
+      setStreamState(prev => ({ ...prev, lastEventAt: Date.now() }))
       addLog(`🔗 Thread ${event.thread_id.slice(0, 8)}…`)
     } else if (event.type === 'agent_update') {
       const id = normalizeAgentId(event.agent)
+      setStreamState(prev => ({ ...prev, lastEventAt: Date.now() }))
       if (id === 'phase1_join') { addLog('⚡ Phase 1 done → sequential phase'); return }
       markAgentDone(id, event.findings?.length || event.new_findings || 0)
       addLog(`✓ ${id} — ${event.new_findings || 0} findings`)
@@ -1069,15 +1383,28 @@ export default function AIModulesView() {
       if (event.findings?.length) {
         setLiveFindings(prev => mergeUniqueFindings(prev, event.findings))
       }
+      if (event.correlations?.length) {
+        setLiveCorrelations(prev => mergeUniqueCorrelations(prev, event.correlations))
+      }
+      if (event.investigative_leads?.length) {
+        setLiveLeads(prev => mergeUniqueStrings(prev, event.investigative_leads))
+      }
       const nxt = NEXT_AGENT[id]
       if (nxt) setAgentStates(p => ({ ...p, [nxt]: p[nxt] === 'done' ? 'done' : 'running' }))
     } else if (event.type === 'interrupt') {
       const payload = event.data?.[0]?.value || {}
       setInterrupted(true); setInterruptData(payload)
+      setStreamState(prev => ({ ...prev, lastEventAt: Date.now(), message: 'Awaiting human review' }))
       addLog('⏸ Human review required')
     } else if (event.type === 'complete') {
       if (event.findings?.length) {
         setLiveFindings(event.findings.map(finding => ({ ...finding, agent: normalizeAgentId(finding.agent) })))
+      }
+      if (event.correlations?.length) {
+        setLiveCorrelations(event.correlations)
+      }
+      if (event.investigative_leads?.length) {
+        setLiveLeads(event.investigative_leads)
       }
       setResults({
         ...event,
@@ -1085,6 +1412,7 @@ export default function AIModulesView() {
       })
       setRiskScore(event.risk_score ?? riskScore)
       setRiskLevel(event.risk_level ?? riskLevel)
+      setStreamState(prev => ({ ...prev, state: 'closed', message: 'Stream complete', lastEventAt: Date.now() }))
       const allDone = {}; AGENTS.forEach(a => { allDone[a.id] = 'done' })
       setAgentStates(allDone)
       setCompletedAgents(AGENTS.map(agent => agent.id))
@@ -1095,17 +1423,26 @@ export default function AIModulesView() {
       if (e.toLowerCase().includes('langgraph') || e.toLowerCase().includes('missing') || e.toLowerCase().includes('modulenotfound')) {
         runClassicFallback()
       } else {
+        setStreamState(prev => ({ ...prev, state: 'error', message: e, lastEventAt: Date.now() }))
         addLog(`❌ ${e}`)
       }
     }
   }, [riskScore, riskLevel, runClassicFallback, markAgentDone])
 
-  const launch = useCallback(() => {
+  const launch = useCallback(async () => {
+    const platformSnapshot = await refreshPlatformStatus()
     reset()
     setStage(1)
+    setStreamState({ state: 'connecting', message: 'Connecting to investigation stream…', startedAt: Date.now(), lastEventAt: null })
     // Phase 1 agents all start in parallel
     setAgentStates({ autopsy: 'running', timeline: 'running', cctv: 'running' })
     addLog(`🚀 Case ${input.caseId} — launching 8-agent pipeline`)
+    if (platformSnapshot?.status?.ai_available === false) {
+      addLog('⚠ No LLM provider configured on backend — some agents may fall back')
+    }
+    if (platformSnapshot?.langgraph?.available === false) {
+      addLog(`⚠ LangGraph unavailable: ${platformSnapshot?.langgraph?.error || 'unknown error'}`)
+    }
 
     const abort = api.streamInvestigation({
       case_id: input.caseId,
@@ -1119,11 +1456,12 @@ export default function AIModulesView() {
     }, handleEvent)
 
     abortRef.current = abort
-  }, [input, reset, handleEvent])
+  }, [input, reset, handleEvent, refreshPlatformStatus])
 
   const handleHITL = useCallback((decision) => {
     setInterrupted(false); setInterruptData(null)
     addLog(`👤 Human: ${decision.toUpperCase()}`)
+    setStreamState(prev => ({ ...prev, state: 'connecting', message: 'Resuming investigation…', lastEventAt: Date.now() }))
     const abort = api.resumeInvestigation(threadId, decision, handleEvent)
     abortRef.current = abort
   }, [threadId, handleEvent])
@@ -1133,23 +1471,24 @@ export default function AIModulesView() {
       <AnimatePresence mode="wait">
         {stage === 0 && (
           <motion.div key="input" className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <InputStage input={input} setInput={setInput} onLaunch={launch} />
+            <InputStage input={input} setInput={setInput} onLaunch={launch} platform={platform} onRefreshPlatform={refreshPlatformStatus} />
           </motion.div>
         )}
         {stage === 1 && (
           <motion.div key="pipeline" className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <PipelineStage
               agentStates={agentStates} agentFindings={agentFindings}
-              liveFindings={liveFindings} streamLog={streamLog}
+              liveFindings={liveFindings} liveCorrelations={liveCorrelations} liveLeads={liveLeads} streamLog={streamLog}
               completedCount={completedCount} riskScore={riskScore} riskLevel={riskLevel}
               interrupted={interrupted} interruptData={interruptData}
               onDecide={handleHITL} onReset={reset} threadId={threadId}
+              platform={platform} streamState={streamState} input={input}
             />
           </motion.div>
         )}
         {stage === 2 && (
           <motion.div key="results" className="h-full" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <ResultsStage results={results} input={input} onReset={reset} />
+            <ResultsStage results={results} input={input} onReset={reset} platform={platform} />
           </motion.div>
         )}
       </AnimatePresence>

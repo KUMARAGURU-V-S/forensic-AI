@@ -189,6 +189,7 @@ export const api = {
   streamInvestigation: (payload, onEvent) => {
     const controller = new AbortController()
     const run = async () => {
+      onEvent?.({ type: 'connection', state: 'connecting' })
       const res = await fetch(`${API_BASE}/api/investigate/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ..._authHeaders() },
@@ -196,6 +197,7 @@ export const api = {
         signal: controller.signal,
       })
       if (!res.ok) throw new Error(`Investigate stream ${res.status}`)
+      onEvent?.({ type: 'connection', state: 'open', status: res.status })
       const reader = res.body.getReader()
       const dec = new TextDecoder()
       let buf = ''
@@ -211,8 +213,14 @@ export const api = {
           }
         }
       }
+      onEvent?.({ type: 'connection', state: 'closed' })
     }
-    run().catch(e => { if (e.name !== 'AbortError') onEvent({ type: 'error', error: e.message }) })
+    run().catch(e => {
+      if (e.name !== 'AbortError') {
+        onEvent?.({ type: 'connection', state: 'error', error: e.message })
+        onEvent({ type: 'error', error: e.message })
+      }
+    })
     return () => controller.abort()
   },
 
@@ -223,6 +231,7 @@ export const api = {
   resumeInvestigation: (threadId, response, onEvent) => {
     const controller = new AbortController()
     const run = async () => {
+      onEvent?.({ type: 'connection', state: 'connecting' })
       const res = await fetch(`${API_BASE}/api/investigate/resume`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ..._authHeaders() },
@@ -230,6 +239,7 @@ export const api = {
         signal: controller.signal,
       })
       if (!res.ok) throw new Error(`Resume ${res.status}`)
+      onEvent?.({ type: 'connection', state: 'open', status: res.status })
       const reader = res.body.getReader()
       const dec = new TextDecoder()
       let buf = ''
@@ -245,8 +255,14 @@ export const api = {
           }
         }
       }
+      onEvent?.({ type: 'connection', state: 'closed' })
     }
-    run().catch(e => { if (e.name !== 'AbortError') onEvent({ type: 'error', error: e.message }) })
+    run().catch(e => {
+      if (e.name !== 'AbortError') {
+        onEvent?.({ type: 'connection', state: 'error', error: e.message })
+        onEvent({ type: 'error', error: e.message })
+      }
+    })
     return () => controller.abort()
   },
 
