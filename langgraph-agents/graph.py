@@ -4,7 +4,7 @@ ForensiX AI — LangGraph Multi-Agent System
 ═══════════════════════════════════════════════════════════════════════════
 
 8 Investigation Stages orchestrated by LangGraph StateGraph:
-1. Autopsy Agent      — Gemini 2.5 Pro (extracts injuries, COD, toxicology)
+1. Autopsy Agent      — Gemini 2.5 Flash (extracts injuries, COD, toxicology)
 2. Timeline Agent     — Local deterministic (gap detection, clustering)
 3. CCTV Agent         — Gemini 2.5 Flash (person/vehicle/weapon detection)
 4. Toxicology Agent   — Featherless LLM (drug interactions, significance)
@@ -69,32 +69,118 @@ class ForensicState(TypedDict):
 
 
 # ═══════════════════════════════════════════════════════════════
-# LLM PROVIDERS
+# LLM PROVIDERS — with fallback chain for Gemini 404 fix
 # ═══════════════════════════════════════════════════════════════
 
+# Gemini model fallback chain — try newer models first, fall back to older stable ones
+GEMINI_MODEL_CHAIN = [
+    "gemini-2.5-flash-preview-05-20",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-001",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest",
+]
+
+_working_gemini_model = None  # Cache the first model that works
+
+
+def _resolve_gemini_model() -> str:
+    """Return the configured or cached working Gemini model name."""
+    global _working_gemini_model
+    if _working_gemini_model:
+        return _working_gemini_model
+    # Use env override if set
+    env_model = os.getenv("GEMINI_MODEL")
+    if env_model:
+        return env_model
+    # Default to the top of the fallback chain
+    return GEMINI_MODEL_CHAIN[0]
+
+
 def get_gemini(model: str = None, temperature: float = 0.1):
-    """Gemini for vision + deep reasoning."""
+    """Gemini for vision + deep reasoning. Uses fallback model chain on 404."""
+    resolved_model = model or _resolve_gemini_model()
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+
+    if not api_key:
+        raise ValueError("No Gemini API key found. Set GEMINI_API_KEY or GOOGLE_API_KEY env var.")
+
     return ChatGoogleGenerativeAI(
-        model=model or os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
-        google_api_key=os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"),
+        model=resolved_model,
+        google_api_key=api_key,
         temperature=temperature,
         max_output_tokens=4096,
     )
 
 
+def get_gemini_with_fallback(temperature: float = 0.1):
+    """Try multiple Gemini models until one works. Caches the working model."""
+    global _working_gemini_model
+
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise ValueError("No Gemini API key found. Set GEMINI_API_KEY or GOOGLE_API_KEY env var.")
+
+    # If we already found a working model, use it
+    if _working_gemini_model:
+        return ChatGoogleGenerativeAI(
+            model=_working_gemini_model,
+            google_api_key=api_key,
+            temperature=temperature,
+            max_output_tokens=4096,
+        )
+
+    # Try env override first
+    env_model = os.getenv("GEMINI_MODEL")
+    models_to_try = ([env_model] if env_model else []) + GEMINI_MODEL_CHAIN
+
+    last_error = None
+    for model_name in models_to_try:
+        try:
+            llm = ChatGoogleGenerativeAI(
+                model=model_name,
+                google_api_key=api_key,
+                temperature=temperature,
+                max_output_tokens=4096,
+            )
+            # Test with a minimal call
+            llm.invoke([HumanMessage(content="test")])
+            _working_gemini_model = model_name
+            print(f"[LangGraph] Gemini model resolved: {model_name}")
+            return llm
+        except Exception as e:
+            last_error = e
+            error_str = str(e).lower()
+            if "404" in error_str or "not found" in error_str or "invalid" in error_str:
+                print(f"[LangGraph] Gemini model '{model_name}' not available, trying next...")
+                continue
+            else:
+                # Non-404 error (auth, quota, etc.) — don't retry with different model
+                raise
+
+    raise ValueError(f"All Gemini models failed. Last error: {last_error}")
+
+
 def get_featherless(temperature: float = 0.2):
     """Featherless/any OpenAI-compatible for text reasoning."""
+    api_key = os.getenv("FEATHERLESS_API_KEY") or os.getenv("LLM_API_KEY")
+    base_url = os.getenv("FEATHERLESS_BASE_URL") or os.getenv("LLM_BASE_URL", "https://api.featherless.ai/v1")
+    model = os.getenv("FEATHERLESS_MODEL") or os.getenv("LLM_MODEL", "meta-llama/Meta-Llama-3.1-70B-Instruct")
+
+    if not api_key:
+        raise ValueError("No Featherless/LLM API key found. Set FEATHERLESS_API_KEY or LLM_API_KEY env var.")
+
     return ChatOpenAI(
-        model=os.getenv("FEATHERLESS_MODEL") or os.getenv("LLM_MODEL", "meta-llama/Meta-Llama-3.1-70B-Instruct"),
-        api_key=os.getenv("FEATHERLESS_API_KEY") or os.getenv("LLM_API_KEY"),
-        base_url=os.getenv("FEATHERLESS_BASE_URL") or os.getenv("LLM_BASE_URL", "https://api.featherless.ai/v1"),
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
         temperature=temperature,
         max_tokens=2048,
     )
 
 
 # ═══════════════════════════════════════════════════════════════
-# AGENT 1: AUTOPSY AGENT (Gemini 2.5 Pro)
+# AGENT 1: AUTOPSY AGENT (Gemini with fallback)
 # ═══════════════════════════════════════════════════════════════
 
 def autopsy_agent(state: ForensicState) -> dict:
@@ -105,7 +191,7 @@ def autopsy_agent(state: ForensicState) -> dict:
 
     findings = []
     try:
-        llm = get_gemini(temperature=0.05)
+        llm = get_gemini_with_fallback(temperature=0.05)
         prompt = f"""You are an expert forensic pathologist. Extract ALL findings from this autopsy report.
 Return ONLY valid JSON:
 {{
@@ -150,7 +236,7 @@ REPORT:
     except Exception as e:
         # Fallback: regex extraction
         findings = _regex_autopsy_fallback(report)
-        return {"findings": findings, "errors": [f"Autopsy Gemini failed ({str(e)[:80]}), used fallback"], "completed_agents": ["autopsy"]}
+        return {"findings": findings, "errors": [f"Autopsy LLM failed ({str(e)[:80]}), used regex fallback"], "completed_agents": ["autopsy"]}
 
     return {"findings": findings, "completed_agents": ["autopsy"]}
 
@@ -204,7 +290,7 @@ def timeline_agent(state: ForensicState) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════
-# AGENT 3: CCTV AGENT (Gemini 2.5 Flash — multimodal)
+# AGENT 3: CCTV AGENT (Gemini Vision with fallback)
 # ═══════════════════════════════════════════════════════════════
 
 def cctv_agent(state: ForensicState) -> dict:
@@ -216,7 +302,7 @@ def cctv_agent(state: ForensicState) -> dict:
         return {"errors": ["CCTV: No frames provided"], "completed_agents": ["cctv"]}
 
     try:
-        llm = get_gemini(temperature=0.05)
+        llm = get_gemini_with_fallback(temperature=0.05)
 
         for i, frame_b64 in enumerate(frames[:8]):
             prompt = f"""Forensic CCTV analysis. Frame {i+1}/{min(len(frames),8)}.
