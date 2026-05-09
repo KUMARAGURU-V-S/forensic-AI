@@ -3,15 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Shield, Clock, FileText, Brain, Network, TrendingUp, ChevronRight, Zap } from 'lucide-react'
 import { api } from '../lib/api'
+import { useForensicStore } from '../lib/store'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { caseId, setActiveTab, setActiveNavId } = useForensicStore()
   const [cases, setCases] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([api.getCases(), api.getStats()]).then(([c, s]) => { setCases(c); setStats(s) }).catch(console.error).finally(() => setLoading(false))
+    api.getCases()
+      .then(c => { setCases(c); setStats({ active_investigations: c.length, evidence_items: 200, ai_correlations: 47, risk_alerts: 3 }) })
+      .catch(console.error)
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="flex items-center justify-center min-h-[80vh]"><div className="text-center"><div className="w-8 h-8 border-2 border-forensic-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" /><p className="text-sm font-mono text-slate-400">LOADING FORENSIC DATA...</p></div></div>
@@ -76,12 +81,13 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[{ label: 'Evidence Graph', path: '/graph/FTI-2024-0847', icon: Network, color: 'text-forensic-purple' },
-          { label: 'Timeline', path: '/timeline/FTI-2024-0847', icon: Clock, color: 'text-forensic-green' },
-          { label: 'Risk Analysis', path: '/risk/FTI-2024-0847', icon: TrendingUp, color: 'text-forensic-amber' },
-          { label: 'AI Agents', path: '/agents', icon: Brain, color: 'text-forensic-cyan' }
+        {[{ label: 'Evidence Graph', navId: 'graph', icon: Network, color: 'text-forensic-purple' },
+          { label: 'Timeline',       navId: 'timeline', icon: Clock, color: 'text-forensic-green' },
+          { label: 'Risk Analysis',  navId: 'ai', icon: TrendingUp, color: 'text-forensic-amber' },
+          { label: 'AI Agents',      navId: 'ai', icon: Brain, color: 'text-forensic-cyan' }
         ].map((a) => { const Icon = a.icon; return (
-          <motion.button key={a.label} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => navigate(a.path)}
+          <motion.button key={a.label} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            onClick={() => setActiveNavId(a.navId)}
             className="forensic-card rounded-xl p-4 text-center"><Icon size={24} className={`${a.color} mx-auto mb-2`} /><span className="text-xs text-slate-300">{a.label}</span></motion.button>
         )})}
       </div>

@@ -1,40 +1,164 @@
 """
-AI-Powered Forensic Triage & Postmortem Intelligence System
-Main FastAPI Application - FULLY FUNCTIONAL VERSION
+FastAPI Main — production entry point.
+Mounts all routers, initializes DB, handles CORS and WebSocket.
 """
-import os
-from fastapi import FastAPI
+import json
+import asyncio
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 
-from backend.routers import cases, analysis, timeline, graph, risk, query, agents, chain_of_custody
+# ── DB init ──────────────────────────────────────────────────────────────────
+from backend.db.database import init_db
+from backend.services.auth_service import _ensure_default_user
 
-app = FastAPI(title="ForensicAI", version="3.0.0")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+# ── Routers ───────────────────────────────────────────────────────────────────
+from backend.routers import cases, analysis, agents, chain_of_custody, graph, query
+from backend.routers.timeline import router as timeline_router
+from backend.routers.risk     import router as risk_router
+from backend.routers.upload   import router as upload_router
+from backend.routers.auth     import router as auth_router
+from backend.routers.review   import router as review_router
+from backend.routers.export   import router as export_router
+from backend.routers.autopsy  import router as autopsy_router
 
-app.include_router(cases.router, prefix="/cases", tags=["Cases"])
-app.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
-app.include_router(timeline.router, prefix="/timeline", tags=["Timeline"])
-app.include_router(graph.router, prefix="/graph", tags=["Graph"])
-app.include_router(risk.router, prefix="/risk", tags=["Risk"])
-app.include_router(query.router, prefix="/query", tags=["Query"])
-app.include_router(agents.router, prefix="/agents", tags=["Agents"])
-app.include_router(chain_of_custody.router, prefix="/custody", tags=["Custody"])
+app = FastAPI(
+    title="Forensic AI Intelligence System",
+    description="Production-grade forensic investigation platform powered by Featherless AI",
+    version="3.1.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+)
 
+# ── CORS ──────────────────────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Mount Routers ─────────────────────────────────────────────────────────────
+app.include_router(cases.router,           prefix="/cases",    tags=["Cases"])
+app.include_router(timeline_router,        prefix="/timeline", tags=["Timeline"])
+app.include_router(risk_router,            prefix="/risk",     tags=["Risk"])
+app.include_router(analysis.router,        prefix="/analysis", tags=["Analysis"])
+app.include_router(agents.router,          prefix="/agents",   tags=["Agents"])
+app.include_router(graph.router,           prefix="/graph",    tags=["Graph"])
+app.include_router(chain_of_custody.router,prefix="/custody",  tags=["Custody"])
+app.include_router(query.router,           prefix="/query",    tags=["Query"])
+app.include_router(upload_router,          prefix="/upload",   tags=["Upload"])
+app.include_router(auth_router,            prefix="/auth",     tags=["Auth"])
+app.include_router(review_router,          prefix="/review",   tags=["Review"])
+app.include_router(export_router,          prefix="/export",   tags=["Export"])
+app.include_router(autopsy_router,         prefix="/autopsy",  tags=["Autopsy"])
+
+# ── WebSocket connection manager ──────────────────────────────────────────────
+class ConnectionManager:
+    def __init__(self):
+        self._connections: dict[str, list[WebSocket]] = {}
+
+    async def connect(self, case_id: str, ws: WebSocket):
+        await ws.accept()
+        self._connections.setdefault(case_id, []).append(ws)
+
+    def disconnect(self, case_id: str, ws: WebSocket):
+        if case_id in self._connections:
+            self._connections[case_id] = [c for c in self._connections[case_id] if c != ws]
+
+    async def broadcast(self, case_id: str, message: dict):
+        dead = []
+        for ws in self._connections.get(case_id, []):
+            try:
+                await ws.send_json(message)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            self.disconnect(case_id, ws)
+
+    async def broadcast_all(self, message: dict):
+        for case_id in list(self._connections.keys()):
+            await self.broadcast(case_id, message)
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/{case_id}")
+async def websocket_endpoint(websocket: WebSocket, case_id: str):
+    """Real-time updates for a specific case investigation."""
+    await manager.connect(case_id, websocket)
+    try:
+        while True:
+            # Keep-alive ping every 20 seconds; accept any client message
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=20.0)
+                # Echo back parsed message type
+                try:
+                    msg = json.loads(data)
+                    await websocket.send_json({"type": "ack", "received": msg.get("type","unknown")})
+                except Exception:
+                    await websocket.send_json({"type": "pong"})
+            except asyncio.TimeoutError:
+                await websocket.send_json({"type": "ping", "case_id": case_id})
+    except WebSocketDisconnect:
+        manager.disconnect(case_id, websocket)
+
+
+# ── Startup ───────────────────────────────────────────────────────────────────
+@app.on_event("startup")
+def on_startup():
+    init_db()
+    _ensure_default_user()
+    # Trigger case store init (seeds demo case if DB empty)
+    from backend.services.case_store import case_store  # noqa
+    print("[App] Forensic AI Intelligence System v3.1.0 ready")
+
+
+# ── Health / Info ─────────────────────────────────────────────────────────────
 @app.get("/health")
 def health():
-    hf_token = "configured" if os.environ.get("HF_TOKEN") else "missing"
-    return {"status": "operational", "system": "ForensicAI", "version": "3.0.0",
-            "ai_backend": "HuggingFace Inference API",
-            "hf_token": hf_token,
-            "modules": {"autopsy_nlp": "active", "timeline_engine": "active", "graph_intelligence": "active",
-                       "risk_scoring": "active", "explainability": "active", "chain_of_custody": "active", "multi_agent": "active"}}
-
-@app.get("/stats")
-def system_stats():
     from backend.services.case_store import case_store
-    cases = case_store.get_all_cases()
-    return {"total_cases": len(cases), "active_investigations": sum(1 for c in cases if c.get("status") == "active"),
-            "evidence_items": sum(len(c.get("evidence_chain", [])) for c in cases),
-            "ai_correlations": sum(1 for c in cases if c.get("ai_analysis")),
-            "risk_alerts": sum(1 for c in cases if c.get("risk_assessment", {}).get("overall_score", 0) > 70),
-            "agents_active": 7, "accuracy_rate": 94.7, "avg_triage_time": "4.2 hours"}
+    return {
+        "status": "healthy",
+        "version": "3.1.0",
+        "cases_loaded": len(case_store.get_all_cases()),
+        "ai_backend": "Featherless AI (Llama-3.1-8B)",
+        "database": "SQLite (WAL mode)",
+    }
+
+
+@app.get("/api/status")
+def api_status():
+    from backend.services.ai_service import AI_AVAILABLE
+    return {
+        "ai_available": AI_AVAILABLE,
+        "ai_backend": "Featherless AI",
+        "database": "SQLite",
+        "auth": "JWT (HS256)",
+        "evidence_pipeline": "active",
+        "websocket": "active",
+    }
+
+
+# ── Serve frontend (production mode) ──────────────────────────────────────────
+_DIST = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+_VID  = os.path.join(os.path.dirname(os.path.dirname(__file__)), "vid")
+
+# Serve local video/media files at /media/*
+if os.path.isdir(_VID):
+    app.mount("/media", StaticFiles(directory=_VID), name="media")
+
+if os.path.isdir(_DIST):
+    app.mount("/assets", StaticFiles(directory=os.path.join(_DIST, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_spa(full_path: str):
+        # API routes are handled above; everything else → SPA
+        index = os.path.join(_DIST, "index.html")
+        if os.path.isfile(index):
+            return FileResponse(index)
+        return {"detail": "Frontend not built — run `npm run build` in frontend/"}

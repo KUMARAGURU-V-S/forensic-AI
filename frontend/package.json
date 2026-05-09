@@ -14,7 +14,8 @@
     "react-router-dom": "^6.26.0",
     "framer-motion": "^11.3.0",
     "recharts": "^2.12.0",
-    "lucide-react": "^0.400.0"
+    "lucide-react": "^0.400.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",

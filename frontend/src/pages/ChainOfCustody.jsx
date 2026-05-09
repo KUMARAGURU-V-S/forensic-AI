@@ -3,9 +3,12 @@ import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Lock, Check, Shield } from 'lucide-react'
 import { api } from '../lib/api'
+import { useForensicStore } from '../lib/store'
 
 export default function ChainOfCustody() {
-  const { caseId } = useParams()
+  const { caseId: paramId } = useParams()
+  const storeCaseId = useForensicStore(s => s.caseId)
+  const caseId = paramId || storeCaseId || 'FTI-2024-0847'
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
 

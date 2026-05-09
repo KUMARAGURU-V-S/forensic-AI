@@ -1,33 +1,32 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Landing from './pages/Landing'
-import Dashboard from './pages/Dashboard'
-import CaseAnalysis from './pages/CaseAnalysis'
-import Timeline from './pages/Timeline'
-import EvidenceGraph from './pages/EvidenceGraph'
-import RiskScoring from './pages/RiskScoring'
-import Agents from './pages/Agents'
-import ChainOfCustody from './pages/ChainOfCustody'
-import InvestigationQuery from './pages/InvestigationQuery'
-import Navbar from './components/Navbar'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import InvestigationWorkspace from './pages/InvestigationWorkspace'
+import Login from './pages/Login'
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#0a0e1a]">
-        <div className="scanline-overlay"></div>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<><Navbar /><Dashboard /></>} />
-          <Route path="/case/:caseId" element={<><Navbar /><CaseAnalysis /></>} />
-          <Route path="/timeline/:caseId" element={<><Navbar /><Timeline /></>} />
-          <Route path="/graph/:caseId" element={<><Navbar /><EvidenceGraph /></>} />
-          <Route path="/risk/:caseId" element={<><Navbar /><RiskScoring /></>} />
-          <Route path="/agents" element={<><Navbar /><Agents /></>} />
-          <Route path="/custody/:caseId" element={<><Navbar /><ChainOfCustody /></>} />
-          <Route path="/query" element={<><Navbar /><InvestigationQuery /></>} />
-        </Routes>
-      </div>
+      <Routes>
+        {/* Auth */}
+        <Route path="/login"                element={<Login />} />
+        {/* Main workspace */}
+        <Route path="/workspace/:caseId"    element={<InvestigationWorkspace />} />
+        <Route path="/workspace"            element={<InvestigationWorkspace />} />
+        {/* Default redirect */}
+        <Route path="/"                     element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/dashboard"            element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        {/* Legacy routes */}
+        <Route path="/case/:caseId"         element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/timeline/:caseId"     element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/risk/:caseId"         element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/graph/:caseId"        element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/agents"               element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/custody/:caseId"      element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        <Route path="/query"                element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+        {/* Catch-all */}
+        <Route path="*"                     element={<Navigate to="/workspace/FTI-2024-0847" replace />} />
+      </Routes>
     </Router>
   )
 }
+
 export default App
