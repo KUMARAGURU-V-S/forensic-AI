@@ -118,8 +118,10 @@ const riskLabel = (score) =>
 const AGENT_IDS = new Set(AGENTS.map(agent => agent.id))
 const LEGACY_AGENT_IDS = {
   autopsy_agent: 'autopsy',
+  'autopsy-fallback': 'autopsy',
   timeline_agent: 'timeline',
   cctv_agent: 'cctv',
+  'cctv-fallback': 'cctv',
   toxicology_agent: 'toxicology',
   correlation_agent: 'correlation',
   explainability_agent: 'explainability',
@@ -182,6 +184,183 @@ const formatElapsed = (startedAt, now = Date.now()) => {
   const minutes = String(Math.floor(total / 60)).padStart(2, '0')
   const seconds = String(total % 60).padStart(2, '0')
   return `${minutes}:${seconds}`
+}
+
+const escapeHtml = (value = '') => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;')
+
+const formatPrintableDate = () => new Date().toLocaleString(undefined, {
+  year: 'numeric',
+  month: 'short',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+})
+
+function buildPrintableReportHtml({ input, results, platform }) {
+  const score = results?.risk_score ?? 0
+  const level = results?.risk_level ?? riskLabel(score)
+  const findings = results?.findings || []
+  const correlations = results?.correlations || []
+  const leads = results?.investigative_leads || []
+  const factors = results?.risk_factors || {}
+  const explanation = results?.explanation || ''
+  const summary = summarizeInput(input)
+  const groupedFindings = [...findings].sort((a, b) => {
+    const order = { CRITICAL: 0, HIGH: 1, MODERATE: 2, INFO: 3, LOW: 4 }
+    return (order[a.severity] ?? 9) - (order[b.severity] ?? 9)
+  })
+
+  const findingsHtml = groupedFindings.length
+    ? groupedFindings.map((finding) => `
+      <div class="finding finding-${escapeHtml((finding.severity || 'info').toLowerCase())}">
+        <div class="finding-head">
+          <span class="finding-type">${escapeHtml(finding.type || 'FINDING')}</span>
+          <span class="finding-meta">${escapeHtml(normalizeAgentId(finding.agent || 'unknown'))}${finding.confidence ? ` · ${Math.round(finding.confidence * 100)}%` : ''}</span>
+        </div>
+        <div class="finding-body">${escapeHtml(finding.content || '')}</div>
+      </div>
+    `).join('')
+    : '<div class="empty">No findings emitted.</div>'
+
+  const correlationsHtml = correlations.length
+    ? correlations.map((correlation) => `
+      <div class="card">
+        <div class="card-title">${escapeHtml(correlation.source || '')} → ${escapeHtml(correlation.target || '')}</div>
+        <div class="muted">${escapeHtml(correlation.type || 'correlation')}${correlation.strength ? ` · ${Math.round(correlation.strength * 100)}%` : ''}</div>
+        <div>${escapeHtml(correlation.description || '')}</div>
+      </div>
+    `).join('')
+    : '<div class="empty">No cross-evidence correlations emitted.</div>'
+
+  const leadsHtml = leads.length
+    ? leads.map((lead) => `<li>${escapeHtml(lead)}</li>`).join('')
+    : '<li>No investigative leads emitted.</li>'
+
+  const factorsHtml = Object.entries(factors).length
+    ? Object.entries(factors).map(([key, value]) => `
+      <div class="factor-row">
+        <span>${escapeHtml(key)}</span>
+        <span>${escapeHtml(String(value))}/100</span>
+      </div>
+    `).join('')
+    : '<div class="empty">No factor breakdown available.</div>'
+
+  return `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <title>ForensiX Investigation Report - ${escapeHtml(input.caseId)}</title>
+      <style>
+        @page { size: A4; margin: 16mm; }
+        body { font-family: Arial, Helvetica, sans-serif; color: #0f172a; margin: 0; background: #ffffff; }
+        .wrap { max-width: 980px; margin: 0 auto; }
+        .header { border-bottom: 3px solid #0f766e; padding-bottom: 14px; margin-bottom: 22px; }
+        .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #0f766e; font-weight: 700; }
+        h1 { margin: 10px 0 6px; font-size: 32px; line-height: 1.1; }
+        .sub { color: #475569; font-size: 13px; }
+        .hero { display: grid; grid-template-columns: 180px 1fr; gap: 18px; margin-bottom: 20px; }
+        .score { border: 1px solid #cbd5e1; border-radius: 16px; padding: 18px; text-align: center; }
+        .score-value { font-size: 44px; font-weight: 800; color: #0f766e; }
+        .score-label { font-size: 13px; color: #475569; }
+        .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .meta-card { border: 1px solid #dbe4ee; border-radius: 12px; padding: 12px; }
+        .meta-value { font-size: 24px; font-weight: 800; color: #0f172a; }
+        .meta-label { font-size: 12px; color: #475569; }
+        .section { margin-top: 20px; break-inside: avoid; }
+        .section h2 { margin: 0 0 10px; font-size: 18px; border-bottom: 1px solid #dbe4ee; padding-bottom: 6px; }
+        .finding { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+        .finding-critical { border-color: #fecaca; background: #fef2f2; }
+        .finding-high { border-color: #fed7aa; background: #fff7ed; }
+        .finding-moderate { border-color: #fde68a; background: #fffbeb; }
+        .finding-info, .finding-low { border-color: #dbe4ee; background: #f8fafc; }
+        .finding-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; font-size: 12px; }
+        .finding-type { font-weight: 800; }
+        .finding-meta, .muted { color: #64748b; font-size: 12px; }
+        .finding-body { font-size: 13px; line-height: 1.55; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .card { border: 1px solid #dbe4ee; border-radius: 12px; padding: 12px; background: #fff; margin-bottom: 10px; }
+        .card-title { font-weight: 700; margin-bottom: 4px; }
+        .factor-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #dbe4ee; padding: 8px 0; font-size: 13px; }
+        ul { margin: 0; padding-left: 18px; }
+        li { margin-bottom: 8px; line-height: 1.5; }
+        pre { white-space: pre-wrap; word-break: break-word; background: #f8fafc; border: 1px solid #dbe4ee; border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.6; }
+        .footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid #dbe4ee; color: #64748b; font-size: 11px; }
+        .empty { color: #64748b; font-size: 13px; }
+      </style>
+    </head>
+    <body>
+      <div class="wrap">
+        <div class="header">
+          <div class="eyebrow">ForensiX Investigation Report</div>
+          <h1>Case ${escapeHtml(input.caseId)}</h1>
+          <div class="sub">Generated ${escapeHtml(formatPrintableDate())} · Provider ${escapeHtml(platform?.status?.llm_provider || 'Unknown')}</div>
+        </div>
+
+        <div class="hero">
+          <div class="score">
+            <div class="score-value">${escapeHtml(String(score))}</div>
+            <div class="score-label">${escapeHtml(level)} Risk</div>
+          </div>
+          <div class="meta-grid">
+            <div class="meta-card"><div class="meta-value">${groupedFindings.length}</div><div class="meta-label">Findings</div></div>
+            <div class="meta-card"><div class="meta-value">${correlations.length}</div><div class="meta-label">Correlations</div></div>
+            <div class="meta-card"><div class="meta-value">${leads.length}</div><div class="meta-label">Investigative Leads</div></div>
+            <div class="meta-card"><div class="meta-value">${summary.reportLoaded ? 'Yes' : 'No'}</div><div class="meta-label">Autopsy Report Loaded</div></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Evidence Intake</h2>
+          <div class="grid-2">
+            <div class="card"><div class="card-title">Autopsy Report</div><div>${summary.reportChars.toLocaleString()} characters</div></div>
+            <div class="card"><div class="card-title">CCTV Frames</div><div>${summary.frames}</div></div>
+            <div class="card"><div class="card-title">Toxicology Inputs</div><div>${summary.toxicology}</div></div>
+            <div class="card"><div class="card-title">Evidence Items</div><div>${summary.evidence}</div></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Priority Findings</h2>
+          ${findingsHtml}
+        </div>
+
+        <div class="section grid-2">
+          <div>
+            <h2>Risk Factors</h2>
+            ${factorsHtml}
+          </div>
+          <div>
+            <h2>Investigative Leads</h2>
+            <ul>${leadsHtml}</ul>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Evidence Correlations</h2>
+          ${correlationsHtml}
+        </div>
+
+        <div class="section">
+          <h2>AI Explanation</h2>
+          <pre>${escapeHtml(explanation || 'No explanation emitted.')}</pre>
+        </div>
+
+        <div class="footer">
+          Generated from the AI Modules investigation workspace. Save this print view as PDF in the browser print dialog.
+        </div>
+      </div>
+      <script>
+        window.onload = () => {
+          window.print();
+        };
+      </script>
+    </body>
+  </html>`
 }
 
 const summarizeInput = (input) => ({
@@ -257,6 +436,15 @@ function SectionFrame({ title, icon: Icon = Activity, color = C.cyan, action = n
       {children}
     </div>
   )
+}
+
+const DEFAULT_PLATFORM_STATE = {
+  loading: true,
+  health: null,
+  status: null,
+  langgraph: null,
+  agents: null,
+  error: '',
 }
 
 // ═══ RISK GAUGE (SVG) ════════════════════════════════════════════════════════
@@ -405,7 +593,7 @@ function HITLModal({ data, onDecide }) {
 
 // ═══ STAGE 0: INPUT HUB ══════════════════════════════════════════════════════
 
-function InputStage({ input, setInput, onLaunch, platform, onRefreshPlatform }) {
+function InputStage({ input, setInput, onLaunch, platform = DEFAULT_PLATFORM_STATE, onRefreshPlatform = () => {} }) {
   const imgInputRef = useRef(null)
   const txtInputRef = useRef(null)
   const [pdfLoading,   setPdfLoading]   = useState(false)
@@ -487,25 +675,26 @@ function InputStage({ input, setInput, onLaunch, platform, onRefreshPlatform }) 
 
   const canLaunch = input.caseId.trim().length > 0
   const inputSummary = summarizeInput(input)
-  const healthOk = platform.health?.status === 'healthy'
-  const aiOk = Boolean(platform.status?.ai_available)
-  const langGraphOk = Boolean(platform.langgraph?.available)
+  const platformState = platform || DEFAULT_PLATFORM_STATE
+  const healthOk = platformState.health?.status === 'healthy'
+  const aiOk = Boolean(platformState.status?.ai_available)
+  const langGraphOk = Boolean(platformState.langgraph?.available)
   const apiCards = [
     {
       label: 'Core API',
-      detail: healthOk ? `v${platform.health?.version || '4.x'} ready` : platform.error || 'Unavailable',
-      tone: healthOk ? 'good' : platform.loading ? 'info' : 'bad',
+      detail: healthOk ? `v${platformState.health?.version || '4.x'} ready` : platformState.error || 'Unavailable',
+      tone: healthOk ? 'good' : platformState.loading ? 'info' : 'bad',
       icon: Server,
     },
     {
       label: 'LangGraph',
-      detail: langGraphOk ? `${platform.langgraph?.agents || 8} stages online` : platform.langgraph?.error || 'Unavailable',
-      tone: langGraphOk ? 'good' : platform.loading ? 'info' : 'bad',
+      detail: langGraphOk ? `${platformState.langgraph?.agents || 8} stages online` : platformState.langgraph?.error || 'Unavailable',
+      tone: langGraphOk ? 'good' : platformState.loading ? 'info' : 'bad',
       icon: ScanSearch,
     },
     {
       label: 'LLM Provider',
-      detail: aiOk ? `${platform.status?.llm_provider} · ${platform.status?.llm_model}` : 'No provider configured',
+      detail: aiOk ? `${platformState.status?.llm_provider} · ${platformState.status?.llm_model}` : 'No provider configured',
       tone: aiOk ? 'good' : 'warn',
       icon: Brain,
     },
@@ -571,7 +760,7 @@ function InputStage({ input, setInput, onLaunch, platform, onRefreshPlatform }) 
               <StatusChip key={card.label} tone={card.tone} label={card.label} detail={card.detail} icon={card.icon} />
             ))}
           </div>
-          {!aiOk && !platform.loading && (
+          {!aiOk && !platformState.loading && (
             <div className="mt-3 rounded-2xl px-4 py-3 flex items-start gap-2"
               style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.18)' }}>
               <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
@@ -810,7 +999,7 @@ function InputStage({ input, setInput, onLaunch, platform, onRefreshPlatform }) 
 function PipelineStage({
   agentStates, agentFindings, liveFindings, liveCorrelations, liveLeads, streamLog,
   completedCount, riskScore, riskLevel, interrupted, interruptData, onDecide, onReset,
-  threadId, platform, streamState, input,
+  threadId, platform = DEFAULT_PLATFORM_STATE, streamState, input,
 }) {
   const logEndRef = useRef(null)
   const [now, setNow] = useState(Date.now())
@@ -1007,7 +1196,7 @@ function PipelineStage({
 
 // ═══ STAGE 2: RESULTS ════════════════════════════════════════════════════════
 
-function ResultsStage({ results, input, onReset, platform }) {
+function ResultsStage({ results, input, onReset, platform = DEFAULT_PLATFORM_STATE }) {
   const score   = results?.risk_score ?? 0
   const level   = results?.risk_level ?? riskLabel(score)
   const factors = results?.risk_factors || {}
@@ -1025,6 +1214,19 @@ function ResultsStage({ results, input, onReset, platform }) {
 
   const typeColor = { causal: C.red, temporal: C.cyan, behavioral: C.purple, forensic: C.green }
   const verdict = critical[0]?.content || explanation.split('\n').find(Boolean) || 'Investigation complete. Review summarized findings below.'
+  const handleDownloadPdf = useCallback(() => {
+    const printableHtml = buildPrintableReportHtml({ input, results, platform })
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=1200,height=900')
+
+    if (!printWindow) {
+      window.alert('Popup blocked. Allow popups for this site to export the PDF.')
+      return
+    }
+
+    printWindow.document.open()
+    printWindow.document.write(printableHtml)
+    printWindow.document.close()
+  }, [input, platform, results])
 
   return (
     <div className="h-full overflow-y-auto" style={{ background: C.bg }}>
@@ -1206,7 +1408,12 @@ function ResultsStage({ results, input, onReset, platform }) {
           </SectionFrame>
         )}
 
-        <div className="flex justify-center pb-6">
+        <div className="flex justify-center gap-3 pb-6">
+          <button onClick={handleDownloadPdf}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold transition-all"
+            style={{ background: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.22)', color: C.cyan }}>
+            <FileText size={13} />Download PDF
+          </button>
           <button onClick={onReset}
             className="flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold transition-all"
             style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: '#94a3b8' }}>
@@ -1245,7 +1452,7 @@ export default function AIModulesView() {
   const [interrupted,   setInterrupted]   = useState(false)
   const [interruptData, setInterruptData] = useState(null)
   const [results,       setResults]       = useState(null)
-  const [platform,      setPlatform]      = useState({ loading: true, health: null, status: null, langgraph: null, agents: null, error: '' })
+  const [platform,      setPlatform]      = useState(DEFAULT_PLATFORM_STATE)
   const [streamState,   setStreamState]   = useState({ state: 'idle', message: 'Idle', startedAt: null, lastEventAt: null })
   const abortRef = useRef(null)
   const completedCount = completedAgents.length

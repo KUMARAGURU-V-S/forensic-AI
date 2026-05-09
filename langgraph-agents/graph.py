@@ -69,10 +69,9 @@ class ForensicState(TypedDict):
 
 
 # ═══════════════════════════════════════════════════════════════
-# LLM PROVIDERS — with fallback chain for Gemini 404 fix
+# LLM PROVIDERS — Google Gemini when available, OpenAI-compatible fallback otherwise
 # ═══════════════════════════════════════════════════════════════
 
-# Gemini model fallback chain — try newer models first, fall back to older stable ones
 GEMINI_MODEL_CHAIN = [
     "gemini-2.5-flash-preview-05-20",
     "gemini-2.0-flash",
@@ -81,56 +80,79 @@ GEMINI_MODEL_CHAIN = [
     "gemini-1.5-flash-latest",
 ]
 
-_working_gemini_model = None  # Cache the first model that works
+_working_gemini_model = None
 
 
-def _resolve_gemini_model() -> str:
-    """Return the configured or cached working Gemini model name."""
-    global _working_gemini_model
-    if _working_gemini_model:
-        return _working_gemini_model
-    # Use env override if set
-    env_model = os.getenv("GEMINI_MODEL")
-    if env_model:
-        return env_model
-    # Default to the top of the fallback chain
-    return GEMINI_MODEL_CHAIN[0]
+def _google_gemini_key():
+    """Return a real Google Gemini key, not a generic provider token."""
+    for env_name in ("GOOGLE_API_KEY", "GEMINI_API_KEY"):
+        key = (os.getenv(env_name) or "").strip()
+        if key.startswith("AIza"):
+            return key
+    return None
 
 
-def get_gemini(model: str = None, temperature: float = 0.1):
-    """Gemini for vision + deep reasoning. Uses fallback model chain on 404."""
-    resolved_model = model or _resolve_gemini_model()
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-
-    if not api_key:
-        raise ValueError("No Gemini API key found. Set GEMINI_API_KEY or GOOGLE_API_KEY env var.")
-
-    return ChatGoogleGenerativeAI(
-        model=resolved_model,
-        google_api_key=api_key,
-        temperature=temperature,
-        max_output_tokens=4096,
+def _vision_model_name(preferred: str | None = None):
+    return (
+        preferred
+        or os.getenv("FEATHERLESS_VISION_MODEL")
+        or os.getenv("VISION_MODEL")
+        or os.getenv("LLM_VISION_MODEL")
+        or os.getenv("FEATHERLESS_MODEL")
+        or os.getenv("LLM_MODEL")
+        or "Qwen/Qwen2.5-72B-Instruct"
     )
 
 
-def get_gemini_with_fallback(temperature: float = 0.1):
-    """Try multiple Gemini models until one works. Caches the working model."""
-    global _working_gemini_model
+def has_google_gemini():
+    return bool(_google_gemini_key())
 
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("No Gemini API key found. Set GEMINI_API_KEY or GOOGLE_API_KEY env var.")
 
-    # If we already found a working model, use it
-    if _working_gemini_model:
+def has_vision_model():
+    return bool(
+        has_google_gemini()
+        or os.getenv("FEATHERLESS_VISION_MODEL")
+        or os.getenv("VISION_MODEL")
+        or os.getenv("LLM_VISION_MODEL")
+    )
+
+
+def get_gemini(model: str = None, temperature: float = 0.1, vision: bool = False):
+    """Primary reasoning model with Google-first, OpenAI-compatible fallback."""
+    google_key = _google_gemini_key()
+    if google_key:
         return ChatGoogleGenerativeAI(
-            model=_working_gemini_model,
-            google_api_key=api_key,
+            model=model or os.getenv("GEMINI_MODEL", GEMINI_MODEL_CHAIN[0]),
+            google_api_key=google_key,
             temperature=temperature,
             max_output_tokens=4096,
         )
 
-    # Try env override first
+    return ChatOpenAI(
+        model=_vision_model_name(model) if vision else (model or os.getenv("FEATHERLESS_MODEL") or os.getenv("LLM_MODEL", "meta-llama/Meta-Llama-3.1-70B-Instruct")),
+        api_key=os.getenv("FEATHERLESS_API_KEY") or os.getenv("LLM_API_KEY"),
+        base_url=os.getenv("FEATHERLESS_BASE_URL") or os.getenv("LLM_BASE_URL", "https://api.featherless.ai/v1"),
+        temperature=temperature,
+        max_tokens=4096 if vision else 2048,
+    )
+
+
+def get_gemini_with_fallback(temperature: float = 0.1, vision: bool = False):
+    """Try multiple Google Gemini models when a real Google key exists."""
+    global _working_gemini_model
+
+    google_key = _google_gemini_key()
+    if not google_key:
+        return get_gemini(temperature=temperature, vision=vision)
+
+    if _working_gemini_model:
+        return ChatGoogleGenerativeAI(
+            model=_working_gemini_model,
+            google_api_key=google_key,
+            temperature=temperature,
+            max_output_tokens=4096,
+        )
+
     env_model = os.getenv("GEMINI_MODEL")
     models_to_try = ([env_model] if env_model else []) + GEMINI_MODEL_CHAIN
 
@@ -139,11 +161,10 @@ def get_gemini_with_fallback(temperature: float = 0.1):
         try:
             llm = ChatGoogleGenerativeAI(
                 model=model_name,
-                google_api_key=api_key,
+                google_api_key=google_key,
                 temperature=temperature,
                 max_output_tokens=4096,
             )
-            # Test with a minimal call
             llm.invoke([HumanMessage(content="test")])
             _working_gemini_model = model_name
             print(f"[LangGraph] Gemini model resolved: {model_name}")
@@ -154,9 +175,7 @@ def get_gemini_with_fallback(temperature: float = 0.1):
             if "404" in error_str or "not found" in error_str or "invalid" in error_str:
                 print(f"[LangGraph] Gemini model '{model_name}' not available, trying next...")
                 continue
-            else:
-                # Non-404 error (auth, quota, etc.) — don't retry with different model
-                raise
+            raise
 
     raise ValueError(f"All Gemini models failed. Last error: {last_error}")
 
@@ -187,7 +206,7 @@ def autopsy_agent(state: ForensicState) -> dict:
     """Extract injuries, COD, manner, toxicology from autopsy report."""
     report = state.get("report_text", "")
     if not report or len(report) < 50:
-        return {"errors": ["Autopsy: No report text provided"], "completed_agents": ["autopsy"]}
+        return {"completed_agents": ["autopsy"]}
 
     findings = []
     try:
@@ -236,7 +255,7 @@ REPORT:
     except Exception as e:
         # Fallback: regex extraction
         findings = _regex_autopsy_fallback(report)
-        return {"findings": findings, "errors": [f"Autopsy LLM failed ({str(e)[:80]}), used regex fallback"], "completed_agents": ["autopsy"]}
+        return {"findings": findings, "errors": [f"Autopsy extraction model failed ({str(e)[:80]}), used fallback"], "completed_agents": ["autopsy"]}
 
     return {"findings": findings, "completed_agents": ["autopsy"]}
 
@@ -251,7 +270,7 @@ def timeline_agent(state: ForensicState) -> dict:
     findings = []
 
     if len(evidence) < 2:
-        return {"errors": ["Timeline: Need 2+ evidence items"], "completed_agents": ["timeline"]}
+        return {"completed_agents": ["timeline"]}
 
     from datetime import datetime
     sorted_ev = sorted(
@@ -299,10 +318,13 @@ def cctv_agent(state: ForensicState) -> dict:
     findings = []
 
     if not frames:
-        return {"errors": ["CCTV: No frames provided"], "completed_agents": ["cctv"]}
+        return {"completed_agents": ["cctv"]}
 
     try:
-        llm = get_gemini_with_fallback(temperature=0.05)
+        if not has_vision_model():
+            return {"errors": ["CCTV vision model not configured. Set GOOGLE_API_KEY for Gemini Vision or FEATHERLESS_VISION_MODEL for an OpenAI-compatible vision model."], "completed_agents": ["cctv"]}
+
+        llm = get_gemini_with_fallback(temperature=0.05, vision=True)
 
         for i, frame_b64 in enumerate(frames[:8]):
             prompt = f"""Forensic CCTV analysis. Frame {i+1}/{min(len(frames),8)}.
@@ -337,7 +359,7 @@ Return ONLY valid JSON:
                     findings.append({"type": "PERSON_COUNT", "content": f"Frame {i+1}: {data['person_count']} person(s)", "severity": "INFO", "confidence": 0.9, "agent": "cctv"})
 
     except Exception as e:
-        return {"errors": [f"CCTV Agent failed: {str(e)[:100]}"], "completed_agents": ["cctv"]}
+        return {"errors": [f"CCTV vision model failed: {str(e)[:100]}"], "completed_agents": ["cctv"]}
 
     # Cross-frame person discrepancy
     counts = [int(f["content"].split(":")[1].strip().split(" ")[0]) for f in findings if f["type"] == "PERSON_COUNT"]
@@ -404,7 +426,7 @@ def correlation_agent(state: ForensicState) -> dict:
         correlations.append({"type": "temporal", "source": "Person discrepancy", "target": "Phone disconnection", "strength": 0.93, "description": "Victim phone silenced when suspect departed alone"})
     if has("DEFENSIVE_WOUNDS") and has("MANNER_OF_DEATH") and "homicide" in (has("MANNER_OF_DEATH") or {}).get("content", "").lower():
         correlations.append({"type": "forensic", "source": "Defensive wounds", "target": "Homicide", "strength": 0.95, "description": "Defensive wounds corroborate homicide — victim resisted"})
-    if has_content("benzodiazepine") and has("DEFENSIVE_WOUNDS"):
+    if (has_content("benzodiazepine") or has_content("diazepam")) and has("DEFENSIVE_WOUNDS"):
         correlations.append({"type": "causal", "source": "Sedative", "target": "Defensive wounds", "strength": 0.82, "description": "Partial sedation + resistance = victim drugged then attacked"})
     if has_content("high speed") or has_content("very_fast"):
         rapid = has_content("high speed") or has_content("very_fast")
@@ -525,7 +547,7 @@ def lead_generator(state: ForensicState) -> dict:
         leads.append("🔴 Submit fingernail DNA for CODIS search — direct suspect ID")
     if any(f.get("type") == "VEHICLE_DETECTED" for f in findings):
         leads.append("🟡 Run license plate through ANPR database")
-    if any("benzodiazepine" in f.get("content", "").lower() for f in findings):
+    if any(any(keyword in f.get("content", "").lower() for keyword in ("benzodiazepine", "diazepam", "alprazolam", "lorazepam")) for f in findings):
         leads.append("🟡 Check victim prescription records for sedative source")
     if any(f.get("type") == "WEAPON_DETECTED" for f in findings):
         leads.append("🔴 Match CCTV weapon to injury patterns")
@@ -674,22 +696,31 @@ def _parse_time(ts: str):
 def _regex_autopsy_fallback(text: str) -> list[dict]:
     """Regex fallback when Gemini is unavailable."""
     import re
+
+    def _clean_excerpt(value: str) -> str:
+        value = re.sub(r"^\s*(?:is\s+determined\s+to\s+be|is|was)\s+", "", value, flags=re.IGNORECASE)
+        value = re.sub(r"\s+", " ", value).strip(" :;,-")
+        return value
+
     findings = []
     patterns = [
-        (r"cause\s+of\s+death[:\s]*([^\n.]{5,120})", "CAUSE_OF_DEATH", "CRITICAL"),
-        (r"manner\s+of\s+death[:\s]*(homicide|suicide|accident\w*|natural|undetermined)", "MANNER_OF_DEATH", "CRITICAL"),
+        (r"cause\s+of\s+death(?:\s+is)?(?:\s+determined\s+to\s+be)?[:\s]*([^\n.]{5,120})", "CAUSE_OF_DEATH", "CRITICAL"),
+        (r"manner\s+of\s+death(?:\s+is)?[:\s]*(homicide|suicide|accident\w*|natural|undetermined)", "MANNER_OF_DEATH", "CRITICAL"),
+        (r"(ligature\s+strangulation[^\n.,]{0,60})", "CAUSE_OF_DEATH", "CRITICAL"),
         (r"(blunt\s+force\s+trauma[^\n.,]{0,60})", "INJURY", "HIGH"),
         (r"(defensive\s+wounds?[^\n.,]{0,60})", "DEFENSIVE_WOUNDS", "CRITICAL"),
         (r"(ligature\s+mark[^\n.,]{0,60})", "INJURY", "HIGH"),
         (r"(petechial\s+hemorrhages?[^\n.,]{0,40})", "ASPHYXIA_INDICATOR", "HIGH"),
         (r"(subdural\s+hematoma[^\n.,]{0,40})", "INJURY", "HIGH"),
+        (r"(ethanol[:\s]*[\d.]+\s*(?:g/dL|mg/dL))", "TOXICOLOGY", "MODERATE"),
         (r"(blood\s+alcohol[:\s]*[\d.]+\s*g/dL)", "TOXICOLOGY", "MODERATE"),
-        (r"(benzodiazepines?[:\s]*[^\n.,]{0,40})", "TOXICOLOGY", "HIGH"),
+        (r"(diazepam[:\s]*[\d.]+\s*(?:mg/L|ug/mL|ng/mL))", "TOXICOLOGY", "HIGH"),
+        (r"(benzodiazepines?[:\s]*[\d.]+\s*(?:mg/L|ug/mL|ng/mL))", "TOXICOLOGY", "HIGH"),
     ]
     seen = set()
     for pattern, ftype, severity in patterns:
         for match in re.finditer(pattern, text, re.IGNORECASE):
-            content = (match.group(1) if match.lastindex else match.group(0)).strip()
+            content = _clean_excerpt((match.group(1) if match.lastindex else match.group(0)).strip())
             if content.lower() not in seen and len(content) > 3:
                 seen.add(content.lower())
                 findings.append({"type": ftype, "content": content, "severity": severity, "confidence": 0.75, "agent": "autopsy-fallback"})

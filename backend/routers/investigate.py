@@ -220,12 +220,16 @@ async def extract_pdf_text(file: UploadFile = File(...)):
 
 @router.get("/status")
 def langgraph_status():
+    google_ready = bool(os.getenv("GOOGLE_API_KEY", "").startswith("AIza") or os.getenv("GEMINI_API_KEY", "").startswith("AIza"))
+    vision_ready = bool(google_ready or os.getenv("FEATHERLESS_VISION_MODEL") or os.getenv("VISION_MODEL") or os.getenv("LLM_VISION_MODEL"))
     return {
         "available": _LANGGRAPH_AVAILABLE,
         "error": _LANGGRAPH_ERROR if not _LANGGRAPH_AVAILABLE else None,
         "framework": "LangGraph" if _LANGGRAPH_AVAILABLE else None,
         "agents": 8 if _LANGGRAPH_AVAILABLE else 0,
         "features": ["streaming_sse", "human_in_the_loop", "parallel_phase1", "memory_saver"] if _LANGGRAPH_AVAILABLE else [],
+        "google_gemini_available": google_ready,
+        "vision_model_available": vision_ready,
     }
 
 

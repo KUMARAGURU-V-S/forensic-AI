@@ -1,0 +1,36 @@
+{
+  "case_id": "FTI-2024-0847",
+  "report_text_file": "testing/fixtures/fti-2024-0847-sample-report.txt",
+  "toxicology_data": [
+    {
+      "substance": "diazepam",
+      "level": "0.8 mg/L"
+    }
+  ],
+  "evidence": [
+    {
+      "type": "digital",
+      "source": "Phone",
+      "details": "Victim phone disconnected abruptly",
+      "timestamp": "2024-02-18T22:14:00"
+    },
+    {
+      "type": "physical",
+      "source": "Door camera",
+      "details": "Unknown male exits building rapidly",
+      "timestamp": "2024-02-18T22:16:00"
+    },
+    {
+      "type": "witness",
+      "source": "Neighbor",
+      "details": "Argument heard from apartment",
+      "timestamp": "2024-02-18T21:58:00"
+    }
+  ],
+  "expected_minimums": {
+    "findings": 5,
+    "timeline_findings": 2,
+    "autopsy_findings": 3,
+    "investigative_leads": 1
+  }
+}
