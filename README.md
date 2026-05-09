@@ -8,6 +8,8 @@ app_port: 7860
 fullWidth: true
 header: mini
 startup_duration_timeout: 10m
+tags:
+- ml-intern
 ---
 
 # 🔬 AI-Powered Forensic Triage & Postmortem Intelligence System
