@@ -1,0 +1,111 @@
+// Prisma Schema for Forensic Triage Intelligence System
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          String    @default("investigator") // investigator, admin, forensic_expert
+  avatar        String?
+  department    String?
+  badge         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  cases         Case[]
+  activities    Activity[]
+}
+
+model Case {
+  id                String     @id @default(cuid())
+  caseNumber        String     @unique
+  title             String
+  status            String     @default("open") // open, in_progress, closed, cold
+  priority          String     @default("medium") // low, medium, high, critical
+  decedentName      String?
+  decedentAge       Int?
+  decedentGender    String?
+  dateOfDeath       DateTime?
+  dateFound         DateTime?
+  location          String?
+  latitude          Float?
+  longitude         Float?
+  synopsis          String?
+  riskScore         Float?
+  riskLevel         String?    // LOW, MODERATE, HIGH, CRITICAL
+  todEstimateHours  Float?
+  todConfidence     String?
+  mannerOfDeath     String?
+  causeOfDeath      String?
+  aiAnalysis        String?    // JSON stored as text
+  aiSummary         String?
+  autopsyReportUrl  String?
+  assignedToId      String?
+  assignedTo        User?      @relation(fields: [assignedToId], references: [id])
+  evidence          Evidence[]
+  anomalies         Anomaly[]
+  timelineEvents    TimelineEvent[]
+  activities        Activity[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Evidence {
+  id          String    @id @default(cuid())
+  caseId      String
+  type        String    // digital, physical, witness, forensic, toxicology
+  source      String    // CCTV, mobile, GPS, lab_report, witness_statement
+  content     String
+  timestamp   DateTime?
+  latitude    Float?
+  longitude   Float?
+  metadata    String?   // JSON
+  confidence  Float?
+  flagged     Boolean   @default(false)
+  case        Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Anomaly {
+  id             String   @id @default(cuid())
+  caseId         String
+  type           String   // violence_mismatch, evidence_gap, sedation_indicator, etc.
+  severity       String   // LOW, MODERATE, HIGH, CRITICAL
+  description    String
+  recommendation String?
+  resolved       Boolean  @default(false)
+  case           Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+}
+
+model TimelineEvent {
+  id        String    @id @default(cuid())
+  caseId    String
+  title     String
+  category  String    // physical_evidence, digital_evidence, tod_window, witness
+  source    String
+  timestamp DateTime?
+  details   String?
+  order     Int       @default(0)
+  case      Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  caseId    String?
+  action    String   // created_case, ran_analysis, updated_evidence, etc.
+  details   String?
+  user      User     @relation(fields: [userId], references: [id])
+  case      Case?    @relation(fields: [caseId], references: [id])
+  createdAt DateTime @default(now())
+}

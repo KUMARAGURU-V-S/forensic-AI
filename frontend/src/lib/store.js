@@ -187,6 +187,57 @@ export const useForensicStore = create((set, get) => ({
     }
   },
 
+  /** Run full Intelligence Engine (multi-agent + cross-case + correlation) via new API */
+  runIntelligenceEngine: async (reportText, evidence) => {
+    set(s => ({ ui: { ...s.ui, correlating: true } }))
+    try {
+      const res = await api.runMultiAgent(reportText, evidence, get().caseId)
+      // Update risk data from intelligence results
+      if (res?.riskScore) {
+        set(s => ({
+          riskData: s.riskData
+            ? { ...s.riskData, overall_score: res.riskScore, severity: res.riskLevel }
+            : { overall_score: res.riskScore, severity: res.riskLevel, components: [] }
+        }))
+      }
+      return res
+    } catch (e) {
+      console.warn('[Store] Intelligence engine failed:', e)
+    } finally {
+      set(s => ({ ui: { ...s.ui, correlating: false } }))
+    }
+  },
+
+  /** Run cross-case intelligence matching */
+  runCrossCaseMatch: async (signature) => {
+    try {
+      return await api.runCrossCase(signature)
+    } catch (e) {
+      console.warn('[Store] Cross-case failed:', e)
+      return null
+    }
+  },
+
+  /** AI Chat with GraphRAG */
+  chatWithAI: async (messages) => {
+    try {
+      return await api.chatAI(messages)
+    } catch (e) {
+      console.warn('[Store] AI Chat failed:', e)
+      return { response: 'AI Chat unavailable. Check LLM provider settings.', meta: {} }
+    }
+  },
+
+  /** Analyze report with full NLP + LLM + GraphRAG */
+  analyzeWithGraphRAG: async (text) => {
+    try {
+      return await api.analyzeReport(text)
+    } catch (e) {
+      console.warn('[Store] Analyze failed:', e)
+      return null
+    }
+  },
+
   // ── Upload ─────────────────────────────────────────────────────────────────
 
   /** Upload a file as evidence. Refreshes case data after. */

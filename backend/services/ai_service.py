@@ -11,26 +11,28 @@ import numpy as np
 from typing import List, Dict, Any, Optional
 
 # ── Featherless AI Client ────────────────────────────────────────────────────
-FEATHERLESS_KEY = os.environ.get(
-    "FEATHERLESS_API_KEY",
-    "rc_9700b4f459c788fa79bb3ef537ea6c160c062c3fe5d829e5db6d0d6e6d875709"
+# Use GEMINI_API_KEY (botlearn.ai key) if set, otherwise fall back to FEATHERLESS_API_KEY
+FEATHERLESS_KEY  = (
+    os.environ.get("GEMINI_API_KEY") or
+    os.environ.get("FEATHERLESS_API_KEY") or
+    ""
 )
-FEATHERLESS_BASE = "https://api.featherless.ai/v1"
+FEATHERLESS_BASE = os.environ.get("FEATHERLESS_BASE_URL", "https://api.featherless.ai/v1")
 
 try:
     from openai import OpenAI as _OpenAI
-    _client = _OpenAI(api_key=FEATHERLESS_KEY, base_url=FEATHERLESS_BASE)
-    AI_AVAILABLE = True
+    _client = _OpenAI(api_key=FEATHERLESS_KEY, base_url=FEATHERLESS_BASE) if FEATHERLESS_KEY else None
+    AI_AVAILABLE = bool(FEATHERLESS_KEY)
 except ImportError:
     _client = None
     AI_AVAILABLE = False
 
-# Models to try in order (fast → capable) — all open access on Featherless
+# Primary model from env (Qwen/Qwen2.5-72B-Instruct by default), with Mistral fallbacks
+_primary = os.environ.get("FEATHERLESS_MODEL", "Qwen/Qwen2.5-72B-Instruct")
 LLM_MODELS = [
-    "mistralai/Mistral-7B-Instruct-v0.2",
-    "NousResearch/Nous-Hermes-2-Mistral-7B-DPO",
-    "teknium/OpenHermes-2.5-Mistral-7B",
+    _primary,
     "mistralai/Mistral-7B-Instruct-v0.3",
+    "mistralai/Mistral-7B-Instruct-v0.2",
 ]
 
 
@@ -334,7 +336,10 @@ def generate_key_findings(case_data: dict, risk_result: dict) -> List[str]:
             level = f.get("level", "?")
             threshold = f.get("lethal_threshold")
             if threshold:
-                findings.append(f"Toxicology: {subst} at {level} ({float(re.search(r'[\d.]+',str(level)).group() if re.search(r'[\d.]+',str(level)) else 0)/float(re.search(r'[\d.]+',str(threshold)).group() or 1):.1f}x lethal threshold)")
+                _lm = re.search(r"[\d.]+", str(level))
+                _tm = re.search(r"[\d.]+", str(threshold))
+                _ratio = float(_lm.group() if _lm else 0) / float(_tm.group() if _tm else 1)
+                findings.append(f"Toxicology: {subst} at {level} ({_ratio:.1f}x lethal threshold)")
             else:
                 findings.append(f"Toxicology: {subst} at {level}")
 
@@ -361,10 +366,10 @@ def calculate_tod_henssge(body_temp: float, ambient_temp: float,
     Tb, Tr, Ta = 37.2, body_temp, ambient_temp
     if Tr <= Ta or Tb <= Ta:
         return {"error": "Invalid temperatures"}
-    B = 1.2815 / (corrective_factor * (body_weight_kg ** 0.625) * 0.0284)
+    Wc = corrective_factor * body_weight_kg
+    B = 1.2815 * (Wc ** -0.625) + 0.0284
     ratio = (Tr - Ta) / (Tb - Ta)
-    pmi_hours = (-math.log(ratio) / B if 0 < ratio < 1 else (Tb - Tr) / (1.5 * corrective_factor))
-    pmi_hours *= corrective_factor
+    pmi_hours = (-math.log(ratio) / B if 0 < ratio < 1 else (Tb - Tr) / 1.5)
     confidence = max(0.5, 0.95 - pmi_hours * 0.02)
     interval = 1.5 if pmi_hours < 6 else (2.5 if pmi_hours < 12 else (4.0 if pmi_hours < 24 else 6.0))
     return {

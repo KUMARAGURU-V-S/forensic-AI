@@ -25,6 +25,7 @@ COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY --chown=user backend/ ./backend/
+COPY --chown=user langgraph-agents/ ./langgraph-agents/
 COPY --from=frontend-builder /frontend/dist ./frontend/dist/
 
 COPY --chown=user nginx.conf /etc/nginx/nginx.conf

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   LayoutDashboard, FolderOpen, Shield, Clock, Share2,
-  Settings, Link, Brain, HelpCircle,
+  Settings, Link, Brain, MessageSquare, Bot, Cpu, FlaskConical,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -11,8 +11,14 @@ const NAV_ITEMS = [
   { id: 'timeline',  icon: Clock,           label: 'Timeline' },
   { id: 'graph',     icon: Share2,          label: 'Graph Analysis' },
   { id: 'custody',   icon: Link,            label: 'Chain of Custody' },
-  { id: 'ai',        icon: Brain,           label: 'AI Modules' },
-  { id: 'settings',  icon: Settings,        label: 'Settings', bottom: true },
+  // ── AI / ML section ────────────────────────────────
+  { id: 'ai',        icon: Brain,           label: 'AI Modules',         dividerBefore: true },
+  { id: 'agents',    icon: Bot,             label: 'AI Agents (LangGraph)' },
+  { id: 'chat',      icon: MessageSquare,   label: 'AI Chat' },
+  { id: 'intel',     icon: Cpu,             label: 'Intelligence Engine' },
+  { id: 'ml',        icon: FlaskConical,    label: 'ML Pipeline' },
+  // ── Bottom ─────────────────────────────────────────
+  { id: 'settings',  icon: Settings,        label: 'Settings',           bottom: true },
 ]
 
 export default function IconNav({ activeId = 'timeline', onChange }) {
@@ -68,15 +74,16 @@ export default function IconNav({ activeId = 'timeline', onChange }) {
         borderRight: '1px solid rgba(0,212,255,0.08)',
       }}>
       <div className="flex flex-col gap-1">
-        {top.map(item => <Item key={item.id} item={item} />)}
+        {top.map(item => (
+          <div key={item.id}>
+            {item.dividerBefore && <div className="w-6 h-px bg-white/5 mx-auto my-1.5" />}
+            <Item item={item} />
+          </div>
+        ))}
       </div>
       <div className="flex flex-col gap-1 mb-2">
         <div className="w-6 h-px bg-white/5 mx-auto mb-1" />
         {bot.map(item => <Item key={item.id} item={item} />)}
-        <div className="w-6 h-px bg-white/5 mx-auto mt-1" />
-        <button className="w-10 h-10 rounded-xl flex items-center justify-center">
-          <HelpCircle size={17} style={{ color: '#334155' }} />
-        </button>
       </div>
     </div>
   )

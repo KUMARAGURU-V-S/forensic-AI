@@ -23,6 +23,14 @@ from backend.routers.auth     import router as auth_router
 from backend.routers.review   import router as review_router
 from backend.routers.export   import router as export_router
 from backend.routers.autopsy  import router as autopsy_router
+# ── New routers (ported from forensix-ai-nextjs) ─────────────────────────────
+from backend.routers.intelligence   import router as intelligence_router
+from backend.routers.chat           import router as chat_router
+from backend.routers.ml_pipeline    import router as ml_router
+from backend.routers.analyze        import router as analyze_router
+from backend.routers.graphrag       import router as graphrag_router
+from backend.routers.triage_stream  import router as triage_stream_router
+from backend.routers.investigate    import router as investigate_router
 
 app = FastAPI(
     title="Forensic AI Intelligence System",
@@ -55,6 +63,14 @@ app.include_router(auth_router,            prefix="/auth",     tags=["Auth"])
 app.include_router(review_router,          prefix="/review",   tags=["Review"])
 app.include_router(export_router,          prefix="/export",   tags=["Export"])
 app.include_router(autopsy_router,         prefix="/autopsy",  tags=["Autopsy"])
+# ── New routes (ported from forensix-ai-nextjs) ──────────────────────────────
+app.include_router(intelligence_router,    prefix="/api/intelligence", tags=["Intelligence"])
+app.include_router(chat_router,            prefix="/api/chat",         tags=["AI Chat"])
+app.include_router(ml_router,              prefix="/api/ml",           tags=["ML Pipeline"])
+app.include_router(analyze_router,         prefix="/api/analyze",      tags=["Analyze"])
+app.include_router(graphrag_router,        prefix="/api/graphrag",     tags=["GraphRAG"])
+app.include_router(triage_stream_router,   prefix="/api/triage",       tags=["Triage Stream"])
+app.include_router(investigate_router,     prefix="/api/investigate",  tags=["LangGraph Investigation"])
 
 # ── WebSocket connection manager ──────────────────────────────────────────────
 class ConnectionManager:
@@ -122,25 +138,52 @@ def on_startup():
 @app.get("/health")
 def health():
     from backend.services.case_store import case_store
+    from backend.services.supabase_client import SUPABASE_AVAILABLE
+    from backend.services.llm_provider import universal_llm
     return {
         "status": "healthy",
-        "version": "3.1.0",
+        "version": "4.0.0",
         "cases_loaded": len(case_store.get_all_cases()),
-        "ai_backend": "Featherless AI (Llama-3.1-8B)",
-        "database": "SQLite (WAL mode)",
+        "ai_backend": "Universal LLM (Featherless/OpenAI/Groq/Together/HuggingFace)",
+        "database": "SQLite (WAL mode) + Supabase (pgvector)",
+        "supabase_connected": SUPABASE_AVAILABLE,
+        "llm_provider": universal_llm.get_active_provider().name if universal_llm.get_active_provider() else "None configured",
+        "features": [
+            "multi_agent_system", "graphrag", "cross_case_intelligence",
+            "forensic_nlp", "henssge_tod", "evidence_correlation",
+            "ml_pipeline", "ai_chat", "chain_of_custody", "websocket",
+        ],
     }
 
 
 @app.get("/api/status")
 def api_status():
     from backend.services.ai_service import AI_AVAILABLE
+    from backend.services.supabase_client import SUPABASE_AVAILABLE, get_db_status
+    from backend.services.llm_provider import universal_llm
+    from backend.services.graphrag_service import get_knowledge_base_stats
+    provider = universal_llm.get_active_provider()
     return {
         "ai_available": AI_AVAILABLE,
-        "ai_backend": "Featherless AI",
-        "database": "SQLite",
+        "ai_backend": "Universal LLM Provider",
+        "llm_provider": provider.name if provider else "Not configured",
+        "llm_model": provider.model if provider else "None",
+        "database_local": "SQLite",
+        "database_cloud": get_db_status(),
+        "supabase_connected": SUPABASE_AVAILABLE,
+        "graphrag": get_knowledge_base_stats(),
         "auth": "JWT (HS256)",
         "evidence_pipeline": "active",
+        "multi_agent_system": "active (7 agents)",
         "websocket": "active",
+        "features_from_nextjs": [
+            "universal_llm_provider", "graphrag_knowledge_base",
+            "multi_agent_orchestrator", "cross_case_intelligence",
+            "forensic_engine_nlp", "henssge_nomogram",
+            "evidence_correlation", "ml_pipeline_ner",
+            "ai_chat_with_rag", "triage_stream_sse",
+            "supabase_persistence", "chain_of_custody_sha256",
+        ],
     }
 
 

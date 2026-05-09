@@ -12,9 +12,11 @@ router = APIRouter()
 @router.get("/status")
 def get_agents_status():
     """Get real status of AI agents (based on actual service availability)."""
-    from backend.services.ai_service import HF_AVAILABLE, HF_TOKEN
+    import os
+    from backend.services.ai_service import AI_AVAILABLE
+    HF_TOKEN = os.environ.get("HF_TOKEN", "")
     
-    api_status = "active" if (HF_AVAILABLE and HF_TOKEN) else "degraded (no HF_TOKEN)"
+    api_status = "active" if AI_AVAILABLE else "degraded (no API key)"
     
     return {"agents": [
         {"id": "autopsy_agent", "name": "Autopsy Analysis Agent", "status": api_status, "model": "d4data/biomedical-ner-all + Mistral-7B", "capabilities": ["ner_extraction", "structured_analysis", "cod_determination", "toxicology_parsing"]},
@@ -24,7 +26,7 @@ def get_agents_status():
         {"id": "correlation_agent", "name": "Evidence Correlation Agent", "status": "active", "model": "Graph-based + NetworkX", "capabilities": ["cross_evidence_linking", "pattern_discovery", "relationship_scoring"]},
         {"id": "explainability_agent", "name": "Explainability Agent", "status": "active", "model": "SHAP + LIME (sklearn)", "capabilities": ["feature_attribution", "sensitivity_analysis", "legal_formatting"]},
         {"id": "risk_agent", "name": "Risk Assessment Agent", "status": "active", "model": "Multi-factor weighted scoring", "capabilities": ["anomaly_scoring", "risk_classification", "recommendation_generation"]}
-    ], "orchestrator": {"status": "active", "coordination_model": "Sequential + Parallel Pipeline", "hf_api_available": HF_AVAILABLE and bool(HF_TOKEN)}}
+    ], "orchestrator": {"status": "active", "coordination_model": "Sequential + Parallel Pipeline", "hf_api_available": AI_AVAILABLE}}
 
 @router.get("/analysis/{case_id}")
 def run_multi_agent_analysis(case_id: str):

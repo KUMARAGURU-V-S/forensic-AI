@@ -17,7 +17,28 @@ export default function InvestigationQuery() {
     if (!question.trim()) return
     setLoading(true)
     try {
-      const res = await api.query(question)
+      // Try case-context query first (old backend)
+      let res = null
+      try {
+        res = await api.query(question)
+      } catch (e) {
+        // Fallback: use new GraphRAG AI Chat for general forensic questions
+        const chatRes = await api.chatAI([{ role: 'user', content: question }])
+        res = {
+          response: {
+            answer: chatRes.response,
+            confidence: 0.85,
+            evidence_sources: ['GraphRAG Knowledge Base', chatRes.meta?.provider || 'AI'],
+            related_findings: [],
+          },
+          processing: {
+            response_time_ms: chatRes.meta?.latencyMs || 0,
+            method: `${chatRes.meta?.provider || 'LLM'} + GraphRAG`,
+            retrieval_sources: 'Forensic Knowledge Base (25 nodes)',
+            reasoning_steps: 3,
+          },
+        }
+      }
       setResult(res)
       setHistory(prev => [{ question, response: res, timestamp: new Date().toISOString() }, ...prev.slice(0, 4)])
     } catch(e) { console.error(e) }

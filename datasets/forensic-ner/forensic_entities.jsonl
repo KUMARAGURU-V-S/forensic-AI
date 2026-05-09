@@ -1,0 +1,500 @@
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Gunshot wound to left chest", "entities": [{"text": "Gunshot wound", "label": "INJURY", "start": 0, "end": 13}, {"text": "left chest", "label": "ANATOMY", "start": 17, "end": 27}]}
+{"text": "Manner of death: Homicide", "entities": [{"text": "Homicide", "label": "MANNER_OF_DEATH", "start": 17, "end": 25}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Blunt force trauma to the right temporal region with subdural hematoma", "entities": [{"text": "Blunt force trauma", "label": "INJURY", "start": 0, "end": 18}, {"text": "right temporal region", "label": "ANATOMY", "start": 26, "end": 48}]}
+{"text": "Rigor mortis fully developed", "entities": [{"text": "Rigor mortis fully developed", "label": "TIME_INDICATOR", "start": 0, "end": 28}]}
+{"text": "Blood alcohol: 0.04 g/dL", "entities": [{"text": "Blood alcohol: 0.04 g/dL", "label": "TOXICOLOGY", "start": 0, "end": 24}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Petechial hemorrhages in conjunctivae", "entities": [{"text": "Petechial hemorrhages", "label": "INJURY", "start": 0, "end": 21}]}
+{"text": "Cause of death: asphyxia due to ligature strangulation", "entities": [{"text": "asphyxia due to ligature strangulation", "label": "CAUSE_OF_DEATH", "start": 16, "end": 54}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "DNA collected from under fingernails", "entities": [{"text": "DNA collected from under fingernails", "label": "EVIDENCE", "start": 0, "end": 36}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}
+{"text": "Fentanyl 12 ng/mL detected", "entities": [{"text": "Fentanyl 12 ng/mL", "label": "TOXICOLOGY", "start": 0, "end": 17}]}
+{"text": "Defensive wounds on both forearms", "entities": [{"text": "Defensive wounds", "label": "INJURY", "start": 0, "end": 16}, {"text": "forearms", "label": "ANATOMY", "start": 25, "end": 33}]}

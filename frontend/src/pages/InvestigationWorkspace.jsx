@@ -18,17 +18,21 @@ import EvidencePreviewPlayer from '../components/panels/EvidencePreviewPlayer'
 import ExtractedInfoPanel    from '../components/panels/ExtractedInfoPanel'
 
 // ── Inline views (instantaneous, no lazy-load) ─────────────────────────────
-import EvidenceView      from '../components/views/EvidenceView'
-import SettingsView      from '../components/views/SettingsView'
-import CasesView         from '../components/views/CasesView'
-import ChainOfCustodyView from '../components/views/ChainOfCustodyView'
-import AIModulesView     from '../components/views/AIModulesView'
+import EvidenceView         from '../components/views/EvidenceView'
+import SettingsView         from '../components/views/SettingsView'
+import CasesView            from '../components/views/CasesView'
+import ChainOfCustodyView   from '../components/views/ChainOfCustodyView'
+import AIModulesView        from '../components/views/AIModulesView'
 import AutopsyWorkspaceView from '../components/views/AutopsyWorkspaceView'
+import ChatView             from '../components/views/ChatView'
+import IntelligenceView     from '../components/views/IntelligenceView'
+import MLView               from '../components/views/MLView'
 
 // ── Lazy-load heavier pages ────────────────────────────────────────────────
 const ForensicCommandDashboard = lazy(() => import('./ForensicCommandDashboard'))
 const EvidenceGraphPage        = lazy(() => import('./EvidenceGraph'))
 const RiskScoringPage          = lazy(() => import('./RiskScoring'))
+const AgentsPage               = lazy(() => import('./Agents'))
 
 const DEFAULT_CASE = 'FTI-2024-0847'
 const BOTTOM_H     = 220
@@ -70,7 +74,6 @@ export default function InvestigationWorkspace() {
   const nav   = activeNavId || 'timeline'
 
   // ── Route resolver ─────────────────────────────────────────────────────────
-  // Returns the JSX for the current view, or null for the default timeline workspace.
   function getView() {
     switch (nav) {
       case 'dashboard':
@@ -79,6 +82,7 @@ export default function InvestigationWorkspace() {
             <EmbeddedPage><ForensicCommandDashboard /></EmbeddedPage>
           </Suspense>
         )
+
       case 'cases':
         return <CasesView />
 
@@ -100,6 +104,23 @@ export default function InvestigationWorkspace() {
 
       case 'autopsy':
         return <AutopsyWorkspaceView />
+
+      // ── New AI pages ────────────────────────────────────────────────────
+      case 'agents':
+        return (
+          <Suspense fallback={<Spinner />}>
+            <EmbeddedPage><AgentsPage /></EmbeddedPage>
+          </Suspense>
+        )
+
+      case 'chat':
+        return <ChatView caseId={caseId} />
+
+      case 'intel':
+        return <IntelligenceView caseId={caseId} />
+
+      case 'ml':
+        return <MLView />
 
       case 'settings':
         return <SettingsView caseId={caseId} />

@@ -141,4 +141,128 @@ export const api = {
                                                            { method: 'DELETE' }),
   analyzeAutopsyText:  (text, caseId)          => fetchAPI('/autopsy/analyze-text',
                                                            { method: 'POST', body: JSON.stringify({ text, case_id: caseId }) }),
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // NEW APIs — Ported from forensix-ai-nextjs (100% feature transfer)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── Intelligence Engine (Multi-Agent, Cross-Case, Query, Custody) ──────
+  runIntelligence:     (action, body = {}) => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action, ...body }) }),
+  runMultiAgent:       (reportText, evidence, caseId) => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'multi-agent', reportText, evidence, caseId }) }),
+  runCrossCase:        (signature)         => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'cross-case', signature }) }),
+  runDualTod:          (params)            => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'dual-tod', params }) }),
+  runCorrelation:      (evidence)          => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'correlate', evidence }) }),
+  runPrioritize:       (findings)          => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'prioritize', findings }) }),
+  runNLQuery:          (query, findings)   => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'query', query, findings }) }),
+  addCustodyEntry:     (evidenceId, content, actor, action) => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'custody-add', evidenceId, content, actor, custodyAction: action }) }),
+  verifyCustodyChain:  ()                  => fetchAPI('/api/intelligence/', { method: 'POST', body: JSON.stringify({ action: 'custody-verify' }) }),
+
+  // ── AI Chat (GraphRAG-enhanced) ────────────────────────────────────────
+  chatAI:              (messages, provider = null) => fetchAPI('/api/chat/', { method: 'POST', body: JSON.stringify({ messages, provider }) }),
+
+  // ── ML Pipeline (HuggingFace Inference) ─────────────────────────────────
+  runNER:              (text)              => fetchAPI('/api/ml/', { method: 'POST', body: JSON.stringify({ task: 'ner', text }) }),
+  classifyText:        (text, labels)      => fetchAPI('/api/ml/', { method: 'POST', body: JSON.stringify({ task: 'classify', text, labels }) }),
+  getEmbeddings:       (text)             => fetchAPI('/api/ml/', { method: 'POST', body: JSON.stringify({ task: 'embeddings', text }) }),
+  forensicClassify:    (text)             => fetchAPI('/api/ml/', { method: 'POST', body: JSON.stringify({ task: 'forensic-classify', text }) }),
+
+  // ── Analyze (Full NLP + LLM + GraphRAG) ─────────────────────────────────
+  analyzeReport:       (text, caseTitle)   => fetchAPI('/api/analyze/', { method: 'POST', body: JSON.stringify({ text, caseTitle }) }),
+  analyzeTOD:          (params)            => fetchAPI('/api/analyze/', { method: 'POST', body: JSON.stringify({ type: 'tod', params }) }),
+
+  // ── GraphRAG Knowledge Base ─────────────────────────────────────────────
+  retrieveKnowledge:   (query, count = 5)  => fetchAPI('/api/graphrag/retrieve', { method: 'POST', body: JSON.stringify({ query, count }) }),
+  seedKnowledge:       ()                  => fetchAPI('/api/graphrag/seed', { method: 'POST' }),
+  getKnowledgeStats:   ()                  => fetchAPI('/api/graphrag/stats'),
+
+  // ── Triage Stream (SSE) ────────────────────────────────────────────────
+  getTriageStreamUrl:  ()                  => `${API_BASE}/api/triage/stream`,
+
+  // ── LangGraph Investigation (SSE streaming) ────────────────────────────
+  getLangGraphStatus:  ()                  => fetchAPI('/api/investigate/status'),
+
+  /**
+   * Stream a full 8-agent LangGraph investigation.
+   * onEvent(event) is called for each SSE event object.
+   * Returns a function to abort the stream.
+   */
+  streamInvestigation: (payload, onEvent) => {
+    const controller = new AbortController()
+    const run = async () => {
+      const res = await fetch(`${API_BASE}/api/investigate/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ..._authHeaders() },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      })
+      if (!res.ok) throw new Error(`Investigate stream ${res.status}`)
+      const reader = res.body.getReader()
+      const dec = new TextDecoder()
+      let buf = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buf += dec.decode(value, { stream: true })
+        const lines = buf.split('\n')
+        buf = lines.pop() ?? ''
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try { onEvent(JSON.parse(line.slice(6))) } catch { /* skip bad json */ }
+          }
+        }
+      }
+    }
+    run().catch(e => { if (e.name !== 'AbortError') onEvent({ type: 'error', error: e.message }) })
+    return () => controller.abort()
+  },
+
+  /**
+   * Resume an interrupted investigation (human-in-the-loop).
+   * response: "approve" | "reject" | "escalate"
+   */
+  resumeInvestigation: (threadId, response, onEvent) => {
+    const controller = new AbortController()
+    const run = async () => {
+      const res = await fetch(`${API_BASE}/api/investigate/resume`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ..._authHeaders() },
+        body: JSON.stringify({ thread_id: threadId, response }),
+        signal: controller.signal,
+      })
+      if (!res.ok) throw new Error(`Resume ${res.status}`)
+      const reader = res.body.getReader()
+      const dec = new TextDecoder()
+      let buf = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buf += dec.decode(value, { stream: true })
+        const lines = buf.split('\n')
+        buf = lines.pop() ?? ''
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try { onEvent(JSON.parse(line.slice(6))) } catch { /* skip */ }
+          }
+        }
+      }
+    }
+    run().catch(e => { if (e.name !== 'AbortError') onEvent({ type: 'error', error: e.message }) })
+    return () => controller.abort()
+  },
+
+  getInvestigationState: (threadId) =>
+    fetchAPI('/api/investigate/state', { method: 'POST', body: JSON.stringify({ thread_id: threadId }) }),
+
+  /** Extract plain text from a PDF file using server-side pdfplumber. */
+  extractPdfText: async (file) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch(`${API_BASE}/api/investigate/extract-pdf`, {
+      method: 'POST',
+      headers: _authHeaders(),
+      body: fd,
+    })
+    if (!res.ok) throw new Error(`PDF extraction ${res.status}`)
+    return res.json()
+  },
 }
