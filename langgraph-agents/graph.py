@@ -62,6 +62,7 @@ class ForensicState(TypedDict):
     # Explanation
     explanation: str
     investigative_leads: list[str]
+    chronograph: dict
 
     # Control flow
     phase: str
@@ -558,6 +559,61 @@ def lead_generator(state: ForensicState) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════
+# AGENT 9: CHRONOGRAPH AGENT (Gemini)
+# ═══════════════════════════════════════════════════════════════
+
+def chronograph_agent(state: ForensicState) -> dict:
+    """Generate 4D Chronograph data (nodes/edges with timestamps) for visualization."""
+    findings = state.get("findings", [])
+    correlations = state.get("correlations", [])
+    evidence = state.get("evidence", [])
+
+    try:
+        llm = get_gemini_with_fallback(temperature=0.1)
+        
+        evidence_summary = "\n".join([f"- {e.get('source','Unknown')}: {e.get('details','')} at {e.get('timestamp','')}" for e in evidence[:20]])
+        findings_summary = "\n".join([f"- [{f.get('type')}] {f.get('content')}" for f in findings if f.get('severity') in ('CRITICAL', 'HIGH')])
+        
+        prompt = f"""You are a forensic visualization expert. Based on the investigation findings and evidence below, generate a 4D Chronograph dataset.
+This dataset consists of 'entities' (nodes) and 'connections' (edges), each with a 'timestamp' (ISO 8601).
+
+Return ONLY valid JSON in this format:
+{{
+  "entities": [
+    {{ "id": "unique_id", "label": "Short Name", "type": "person|location|evidence|event", "details": "Longer forensic description", "timestamp": "ISO_TIMESTAMP" }}
+  ],
+  "connections": [
+    {{ "id": "unique_id", "from": "source_id", "to": "target_id", "label": "Relationship", "timestamp": "ISO_TIMESTAMP", "details": "Forensic insight about this link" }}
+  ]
+}}
+
+CRITICAL REQUIREMENTS:
+1. Every entity and connection MUST have a timestamp.
+2. If exact time is unknown, estimate based on the narrative sequence.
+3. Include victims, suspects, locations, and key pieces of evidence.
+4. Connections should represent interactions, movements, or causal links.
+
+EVIDENCE:
+{evidence_summary}
+
+FINDINGS:
+{findings_summary}
+"""
+
+        response = llm.invoke([HumanMessage(content=prompt)])
+        data = _safe_json(response.content)
+        
+        if data and "entities" in data:
+            return {"chronograph": data, "completed_agents": ["chronograph"]}
+            
+    except Exception as e:
+        print(f"[LangGraph] Chronograph Agent failed: {e}")
+        
+    # Fallback to empty structure
+    return {"chronograph": {"entities": [], "connections": []}, "completed_agents": ["chronograph"]}
+
+
+# ═══════════════════════════════════════════════════════════════
 # HUMAN-IN-THE-LOOP: Review high-risk decisions
 # ═══════════════════════════════════════════════════════════════
 
@@ -617,6 +673,7 @@ def build_forensic_graph():
     builder.add_node("human_review", human_review_node)
     builder.add_node("explainability", explainability_agent)
     builder.add_node("leads", lead_generator)
+    builder.add_node("chronograph", chronograph_agent)
     builder.add_node("phase1_join", lambda state: {"phase": "phase1_done"})
 
     # START → Parallel fan-out (Autopsy + Timeline + CCTV)
@@ -643,9 +700,10 @@ def build_forensic_graph():
     # Human review → Explainability
     builder.add_edge("human_review", "explainability")
 
-    # Explainability → Leads → END
+    # Explainability → Leads → Chronograph → END
     builder.add_edge("explainability", "leads")
-    builder.add_edge("leads", END)
+    builder.add_edge("leads", "chronograph")
+    builder.add_edge("chronograph", END)
 
     # Compile with checkpointer for HITL
     graph = builder.compile(checkpointer=MemorySaver())

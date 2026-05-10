@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   LayoutDashboard, FolderOpen, Shield, Clock, Share2,
-  Settings, Link, Brain, MessageSquare, Bot, Cpu, FlaskConical,
+  Settings, Link, Brain, MessageSquare, Bot, Cpu, FlaskConical, Globe,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   // ── AI / ML section ────────────────────────────────
   { id: 'ai',        icon: Brain,           label: 'AI Modules',         dividerBefore: true },
   { id: 'agents',    icon: Bot,             label: 'AI Agents (LangGraph)' },
+  { id: 'chronograph', icon: Globe,         label: '4D Chronograph' },
   { id: 'chat',      icon: MessageSquare,   label: 'AI Chat' },
   { id: 'intel',     icon: Cpu,             label: 'Intelligence Engine' },
   { id: 'ml',        icon: FlaskConical,    label: 'ML Pipeline' },

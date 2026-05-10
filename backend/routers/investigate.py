@@ -71,6 +71,7 @@ def _build_complete_event(values: dict, thread_id: Optional[str] = None, case_id
         "correlations": values.get("correlations", []),
         "explanation": values.get("explanation", ""),
         "investigative_leads": values.get("investigative_leads", []),
+        "chronograph": values.get("chronograph", {}),
         "risk_factors": values.get("risk_factors", {}),
         "errors": values.get("errors", []),
     }
@@ -226,8 +227,8 @@ def langgraph_status():
         "available": _LANGGRAPH_AVAILABLE,
         "error": _LANGGRAPH_ERROR if not _LANGGRAPH_AVAILABLE else None,
         "framework": "LangGraph" if _LANGGRAPH_AVAILABLE else None,
-        "agents": 8 if _LANGGRAPH_AVAILABLE else 0,
-        "features": ["streaming_sse", "human_in_the_loop", "parallel_phase1", "memory_saver"] if _LANGGRAPH_AVAILABLE else [],
+        "agents": 9 if _LANGGRAPH_AVAILABLE else 0,
+        "features": ["streaming_sse", "human_in_the_loop", "parallel_phase1", "memory_saver", "4d_chronograph"] if _LANGGRAPH_AVAILABLE else [],
         "google_gemini_available": google_ready,
         "vision_model_available": vision_ready,
     }
@@ -235,7 +236,7 @@ def langgraph_status():
 
 @router.post("/stream")
 async def investigate_stream(req: InvestigateRequest):
-    """Run the full 8-agent forensic pipeline with real-time SSE streaming."""
+    """Run the full 9-agent forensic pipeline with real-time SSE streaming."""
 
     if not _LANGGRAPH_AVAILABLE:
         async def _unavailable():
@@ -260,6 +261,7 @@ async def investigate_stream(req: InvestigateRequest):
         "risk_factors": {},
         "explanation": "",
         "investigative_leads": [],
+        "chronograph": {},
         "phase": "starting",
         "human_decision": "",
     }
@@ -286,6 +288,7 @@ async def investigate_stream(req: InvestigateRequest):
                             "risk_factors": update.get("risk_factors"),
                             "explanation": update.get("explanation"),
                             "investigative_leads": update.get("investigative_leads", []),
+                            "chronograph": update.get("chronograph"),
                             "errors": update.get("errors", []),
                         }
                         yield f'data: {json.dumps(event)}\n\n'
@@ -324,7 +327,7 @@ async def investigate_resume(req: ResumeRequest):
                     yield f'data: {json.dumps({"type": "interrupt", "data": [{"value": i.value, "id": str(i.id)} for i in interrupts]})}\n\n'
                 else:
                     for node_name, update in chunk.items():
-                        yield f'data: {json.dumps({"type": "agent_update", "agent": node_name, "completed_agents": update.get("completed_agents", []), "new_findings": len(update.get("findings", [])), "findings": update.get("findings", []), "new_correlations": len(update.get("correlations", [])), "correlations": update.get("correlations", []), "risk_score": update.get("risk_score"), "risk_level": update.get("risk_level"), "risk_factors": update.get("risk_factors"), "explanation": update.get("explanation"), "investigative_leads": update.get("investigative_leads", []), "errors": update.get("errors", [])})}\n\n'
+                        yield f'data: {json.dumps({"type": "agent_update", "agent": node_name, "completed_agents": update.get("completed_agents", []), "new_findings": len(update.get("findings", [])), "findings": update.get("findings", []), "new_correlations": len(update.get("correlations", [])), "correlations": update.get("correlations", []), "risk_score": update.get("risk_score"), "risk_level": update.get("risk_level"), "risk_factors": update.get("risk_factors"), "explanation": update.get("explanation"), "investigative_leads": update.get("investigative_leads", []), "chronograph": update.get("chronograph"), "errors": update.get("errors", [])})}\n\n'
 
             final = _graph.get_state(config)
             yield f'data: {json.dumps(_build_complete_event(final.values, thread_id=req.thread_id, case_id=final.values.get("case_id")))}\n\n'

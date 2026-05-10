@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useForensicStore } from '../lib/store'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bot, Zap, Check, AlertTriangle, Play, RefreshCw,
@@ -20,9 +21,10 @@ const AGENTS = [
   { id: 'risk',           abbr: 'Risk', name: 'Risk Scoring & Anomaly Detection', icon: '⚠️', color: '#f97316', desc: 'Computes multi-factor risk scores and flags critical anomalies.' },
   { id: 'explainability', abbr: 'Expl', name: 'Explainability & Reasoning',     icon: '💡', color: '#06b6d4', desc: 'Generates transparent SHAP-style reasoning and decision explanations.' },
   { id: 'leads',          abbr: 'Lead', name: 'Lead Prioritization & Briefing', icon: '🎯', color: '#ec4899', desc: 'Prioritizes investigative leads and delivers actionable intelligence.' },
+  { id: 'chronograph',    abbr: '4D',   name: '4D Chronograph Visualization',   icon: '🌐', color: '#facc15', desc: 'Generates immersive spatio-temporal network for 4D visual investigation.' },
 ]
 
-const SEQUENTIAL_ORDER = ['toxicology', 'correlation', 'risk', 'explainability', 'leads']
+const SEQUENTIAL_ORDER = ['toxicology', 'correlation', 'risk', 'explainability', 'leads', 'chronograph']
 
 const WORKFLOW_STEPS = [
   { title: 'Ingest Evidence', desc: 'Upload forensic data from multiple sources — autopsy reports, CCTV, toxicology, digital evidence.' },
@@ -403,6 +405,11 @@ export default function Agents() {
       if (nf > 0) setAgentFindings(prev => ({ ...prev, [agent]: (prev[agent] || 0) + nf }))
       const agentDef = AGENTS.find(a => a.id === agent)
       addLog(`✓ ${agentDef?.abbr || agent} → ${nf} findings extracted`)
+
+      if (event.chronograph) {
+        useForensicStore.setState({ chronographData: event.chronograph })
+      }
+
       if (event.risk_score != null) { setRiskScore(event.risk_score); setRiskLevel(event.risk_level || 'UNKNOWN') }
       if (event.errors?.length) setErrors(prev => [...prev, ...event.errors])
       const idx = SEQUENTIAL_ORDER.indexOf(agent)
@@ -419,9 +426,12 @@ export default function Agents() {
       setFindings(event.findings || []); setCorrelations(event.correlations || [])
       setExplanation(event.explanation || ''); setLeads(event.investigative_leads || [])
       setRiskFactors(event.risk_factors || {})
+      if (event.chronograph) {
+        useForensicStore.setState({ chronographData: event.chronograph })
+      }
       if (event.errors?.length) setErrors(prev => [...prev, ...event.errors])
       const allDone = {}; AGENTS.forEach(a => { allDone[a.id] = 'done' }); setAgentStates(allDone)
-      setCompletedCount(8)
+      setCompletedCount(9)
       addLog(`🏁 Investigation complete — Risk: ${event.risk_score}/100 (${event.risk_level})`)
     } else if (event.type === 'error') { setErrors(prev => [...prev, event.error]); setRunning(false); addLog(`❌ ${event.error}`) }
   }
@@ -429,7 +439,7 @@ export default function Agents() {
   const launchInvestigation = () => {
     resetAll(); setRunning(true); setStartedAt(Date.now())
     setAgentStates({ autopsy: 'running', timeline: 'running', cctv: 'running' })
-    addLog(`🚀 Launching 8-agent forensic investigation — Case: ${caseId}`)
+    addLog(`🚀 Launching 9-agent forensic investigation — Case: ${caseId}`)
     addLog('📊 Phase 1: Auto + Time + CCTV running in parallel')
     const abort = api.streamInvestigation({ case_id: caseId, report_text: reportText || undefined }, handleEvent)
     abortRef.current = abort
@@ -441,7 +451,7 @@ export default function Agents() {
     abortRef.current = api.resumeInvestigation(threadId, decision, handleEvent)
   }
 
-  const progress = Math.round((completedCount / 8) * 100)
+  const progress = Math.round((completedCount / 9) * 100)
 
   return (
     <div className="min-h-full overflow-y-auto" style={{ background: 'linear-gradient(180deg, #020810 0%, #040d1a 30%, #030a14 100%)' }}>

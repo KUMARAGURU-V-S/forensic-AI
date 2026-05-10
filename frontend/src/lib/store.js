@@ -19,6 +19,7 @@ export const useForensicStore = create((set, get) => ({
   riskData:       null,
   explainData:    null,
   graphData:      null,
+  chronographData:null,
   reviews:        [],
   evidenceList:   [],
 

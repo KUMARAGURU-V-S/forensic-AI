@@ -33,6 +33,7 @@ const ForensicCommandDashboard = lazy(() => import('./ForensicCommandDashboard')
 const EvidenceGraphPage        = lazy(() => import('./EvidenceGraph'))
 const RiskScoringPage          = lazy(() => import('./RiskScoring'))
 const AgentsPage               = lazy(() => import('./Agents'))
+const ChronographPage          = lazy(() => import('./ChronographPage'))
 
 const DEFAULT_CASE = 'FTI-2024-0847'
 const BOTTOM_H     = 220
@@ -110,6 +111,13 @@ export default function InvestigationWorkspace() {
         return (
           <Suspense fallback={<Spinner />}>
             <EmbeddedPage><AgentsPage /></EmbeddedPage>
+          </Suspense>
+        )
+
+      case 'chronograph':
+        return (
+          <Suspense fallback={<Spinner />}>
+            <ChronographPage />
           </Suspense>
         )
 
